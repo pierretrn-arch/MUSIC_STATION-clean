@@ -37,6 +37,8 @@
     <RootNamespace>ToneDetector.App</RootNamespace>
     <Product>Music Station</Product>
     <AssemblyTitle>Music Station</AssemblyTitle>
+    <Company>Caramasta</Company>
+    <Authors>Caramasta</Authors>
     <!-- Native VST3 shim (PHASE4-VST3-NATIVE.md) is x64-only. -->
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
