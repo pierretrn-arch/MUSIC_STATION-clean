@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Standalone measurement tool for Phase 6b Stage 2 - NOT part of ToneDetector.sln. Loads 1..N
+    copies of a VST3 instrument through the app's own VstHostSynth (same VstShim.dll, same 48 kHz /
+    512-frame blocks) and reports how much of the audio thread's time they need.
+    How to run it: see the top of Program.cs.
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ToneDetector.Audio\ToneDetector.Audio.csproj" />
+  </ItemGroup>
+
+</Project>

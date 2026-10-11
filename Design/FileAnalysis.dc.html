@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Music Station - File Analysis</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#0F1012;font-family:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;color:#E8E6E1}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="width: 1920px; height: 1080px; box-sizing: border-box; background: #0F1012; display: flex; flex-direction: column; font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; color: #E8E6E1">
+
+<header style="height: 72px; flex-shrink: 0; box-sizing: border-box; padding: 0 32px; display: flex; align-items: center; border-bottom: 1px solid #25272C; background: #131417">
+<div style="display: flex; align-items: center; gap: 14px; flex-shrink: 0">
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="{{accent}}" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="12" x2="5" y2="20"></line><line x1="11" y1="7" x2="11" y2="25"></line><line x1="17" y1="3" x2="17" y2="29"></line><line x1="23" y1="9" x2="23" y2="23"></line><line x1="29" y1="13" x2="29" y2="19"></line></svg>
+<div style="font-size: 22px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap">Music Station</div>
+</div>
+<nav role="tablist" aria-label="Main" style="height: 72px; margin-left: 40px; display: flex; align-items: stretch; gap: 4px">
+<div style="display: flex; align-items: center"><button role="tab" aria-selected="false" style="height: 40px; padding: 0 16px; border: none; border-radius: 8px; background: transparent; color: #C9CBD0; font-size: 16px; font-weight: 500; cursor: pointer; white-space: nowrap">Home</button></div>
+<div style="display: flex; align-items: center"><button role="tab" aria-selected="false" style="height: 40px; padding: 0 16px; border: none; border-radius: 8px; background: transparent; color: #C9CBD0; font-size: 16px; font-weight: 500; cursor: pointer; white-space: nowrap">Live Tuner</button></div>
+<div style="position: relative; display: flex; align-items: center">
+<button role="tab" aria-selected="true" style="height: 40px; padding: 0 16px; border: none; border-radius: 8px; background: transparent; color: #F4F2EE; font-size: 16px; font-weight: 600; cursor: pointer; white-space: nowrap">File Analysis</button>
+<div style="position: absolute; left: 16px; right: 16px; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: {{accent}}"></div>
+</div>
+<div style="display: flex; align-items: center"><button role="tab" aria-selected="false" style="height: 40px; padding: 0 16px; border: none; border-radius: 8px; background: transparent; color: #C9CBD0; font-size: 16px; font-weight: 500; cursor: pointer; white-space: nowrap">Settings</button></div>
+</nav>
+<div style="flex-grow: 1"></div>
+<div style="display: flex; align-items: center; gap: 10px; margin-right: 20px; min-width: 0; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 14px; color: #C9CBD0">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A6AD" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0"></path><line x1="12" y1="18" x2="12" y2="21"></line></svg>
+<div style="max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">[Input device]</div>
+<div style="color: #6B6F77">·</div>
+<div style="white-space: nowrap">[Sample rate]</div>
+</div>
+<div role="status" style="width: 260px; height: 40px; box-sizing: border-box; flex-shrink: 0; padding: 0 16px; display: flex; align-items: center; gap: 10px; border-radius: 999px; background: #13232E">
+<div style="width: 8px; height: 8px; flex-shrink: 0; border-radius: 50%; background: #5FB3E8"></div>
+<div style="font-size: 14px; color: #8CCBF0; white-space: nowrap">Listening</div>
+<div style="width: 1px; height: 18px; background: #24475C"></div>
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; color: #A3A6AD; white-space: nowrap">No pitch</div>
+</div>
+</header>
+
+<div style="height: 72px; flex-shrink: 0; box-sizing: border-box; padding: 0 32px; display: flex; align-items: center; gap: 16px; border-bottom: 1px solid #25272C; background: #17181B">
+<div style="display: flex; align-items: center; gap: 16px; min-width: 0">
+<button style="height: 44px; padding: 0 16px; display: flex; align-items: center; gap: 10px; background: #1F2125; color: #E8E6E1; border: 1px solid #34373D; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer; white-space: nowrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>Load file</button>
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<div style="font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px">[File name]</div>
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; color: #A3A6AD">18 notes</div>
+</div>
+</div>
+<div style="flex-grow: 1"></div>
+<div style="display: flex; align-items: center; gap: 8px">
+<button aria-label="Rewind" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: #1F2125; color: #E8E6E1; border: 1px solid #34373D; border-radius: 8px; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14" rx="1"></rect><path d="M20 5v14L8 12z"></path></svg></button>
+<button aria-label="Play" style="width: 52px; height: 44px; display: flex; align-items: center; justify-content: center; background: {{accent}}; color: #1A1307; border: none; border-radius: 8px; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"></path></svg></button>
+<button aria-label="Stop (press again to go to 0)" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: #1F2125; color: #E8E6E1; border: 1px solid #34373D; border-radius: 8px; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg></button>
+<button aria-pressed="false" style="height: 44px; padding: 0 14px; display: flex; align-items: center; gap: 8px; background: #1F2125; color: #C9CBD0; border: 1px solid #34373D; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l3 3-3 3"></path><path d="M4 11V9a4 4 0 0 1 4-4h12"></path><path d="M7 22l-3-3 3-3"></path><path d="M20 13v2a4 4 0 0 1-4 4H4"></path></svg>Loop</button>
+<div style="margin-left: 12px; display: flex; flex-direction: column; gap: 2px">
+<div style="font-size: 12px; color: #A3A6AD">Position</div>
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 20px; font-weight: 500">4.1.1 <span style="color: #A3A6AD">/ 6.3.1</span></div>
+</div>
+</div>
+<div style="flex-grow: 1"></div>
+<div style="display: flex; align-items: center; gap: 10px">
+<label for="fa-tempo" style="font-size: 14px; color: #A3A6AD">Tempo</label>
+<div style="display: flex; align-items: center; height: 44px; box-sizing: border-box; background: #0F1012; border: 1px solid #34373D; border-radius: 8px; overflow: hidden">
+<input id="fa-tempo" type="text" value="120" style="width: 56px; height: 42px; box-sizing: border-box; padding: 0 4px 0 10px; background: transparent; border: none; color: #E8E6E1; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 18px; text-align: right">
+<div style="padding: 0 8px 0 4px; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; color: #A3A6AD">BPM</div>
+<div style="display: flex; flex-direction: column; border-left: 1px solid #34373D">
+<button aria-label="Increase tempo" style="width: 28px; height: 21px; display: flex; align-items: center; justify-content: center; background: #1F2125; color: #C9CBD0; border: none; border-bottom: 1px solid #34373D; cursor: pointer"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 15 12 9 18 15"></polyline></svg></button>
+<button aria-label="Decrease tempo" style="width: 28px; height: 21px; display: flex; align-items: center; justify-content: center; background: #1F2125; color: #C9CBD0; border: none; cursor: pointer"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+</div>
+</div>
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 16px; color: #C9CBD0">4/4</div>
+</div>
+<button aria-haspopup="menu" style="margin-left: 8px; height: 44px; padding: 0 14px; display: flex; align-items: center; gap: 10px; background: #1F2125; color: #E8E6E1; border: 1px solid #34373D; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><polyline points="7 10 12 15 17 10"></polyline><path d="M4 19h16"></path></svg>Export<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+</div>
+
+<section aria-label="Tuner (collapsed)" style="height: 48px; flex-shrink: 0; box-sizing: border-box; padding: 0 32px; display: flex; align-items: center; gap: 14px; background: #17181B; border-bottom: 1px solid #25272C">
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A6AD">Tuner</div>
+<div style="width: 1px; height: 18px; background: #2E3137"></div>
+<div style="width: 8px; height: 8px; border-radius: 50%; background: #5FB3E8"></div>
+<div style="font-size: 14px; color: #8CCBF0">Listening</div>
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; color: #A3A6AD">No pitch · — Hz</div>
+<div style="flex-grow: 1"></div>
+<button style="height: 32px; padding: 0 12px; display: flex; align-items: center; gap: 6px; background: transparent; color: #C9CBD0; border: 1px solid #34373D; border-radius: 6px; font-size: 13px; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>Expand tuner</button>
+</section>
+
+<div style="height: 56px; flex-shrink: 0; box-sizing: border-box; padding: 0 32px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #25272C; background: #131417">
+<label for="fa-chord" style="font-size: 14px; color: #A3A6AD">Chord</label>
+<select id="fa-chord" style="height: 40px; width: 150px; box-sizing: border-box; padding: 0 10px; background: #0F1012; border: 1px solid #34373D; border-radius: 8px; color: #E8E6E1; font-family: inherit; font-size: 15px"><option>Major</option></select>
+<button style="height: 40px; padding: 0 14px; background: #1F2125; color: #E8E6E1; border: 1px solid #34373D; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer">Apply to selected</button>
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; color: #8CCBF0">3 notes selected</div>
+<div style="width: 1px; height: 28px; margin: 0 4px; background: #2E3137"></div>
+<button style="height: 40px; padding: 0 14px; display: flex; align-items: center; gap: 8px; background: #1F2125; color: #E8E6E1; border: 1px solid #34373D; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"></path><path d="M4 9h11a5 5 0 0 1 0 10h-3"></path></svg>Undo</button>
+<button disabled aria-label="Redo" style="height: 40px; padding: 0 14px; display: flex; align-items: center; gap: 8px; background: #1F2125; color: #E8E6E1; border: 1px solid #34373D; border-radius: 8px; font-size: 14px; font-weight: 500; opacity: 0.4"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14l5-5-5-5"></path><path d="M20 9H9a5 5 0 0 0 0 10h3"></path></svg>Redo</button>
+<div style="width: 1px; height: 28px; margin: 0 4px; background: #2E3137"></div>
+<div role="toolbar" aria-label="Edit tools" style="display: flex; padding: 3px; gap: 3px; background: #0F1012; border: 1px solid #25272C; border-radius: 9px">
+<button aria-label="Select (V)" title="Select (V): drag a box, Shift-click to add, drag edges to resize" aria-pressed="true" style="width: 40px; height: 34px; display: flex; align-items: center; justify-content: center; background: #2A2D33; color: #F4F2EE; border: none; border-radius: 6px; cursor: pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 17 2.5-7L20 10.5z"></path></svg></button>
+<button aria-label="Draw (D)" title="Draw (D)" aria-pressed="false" style="width: 40px; height: 34px; display: flex; align-items: center; justify-content: center; background: transparent; color: #C9CBD0; border: none; border-radius: 6px; cursor: pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"></path></svg></button>
+<button aria-label="Erase (E)" title="Erase (E)" aria-pressed="false" style="width: 40px; height: 34px; display: flex; align-items: center; justify-content: center; background: transparent; color: #C9CBD0; border: none; border-radius: 6px; cursor: pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20H9L4 15a2 2 0 0 1 0-2.8L13.2 3a2 2 0 0 1 2.8 0l4.6 4.6a2 2 0 0 1 0 2.8L11 20"></path></svg></button>
+<button aria-label="Split (S)" title="Split (S): click a note to split it at that point" aria-pressed="false" style="width: 40px; height: 34px; display: flex; align-items: center; justify-content: center; background: transparent; color: #C9CBD0; border: none; border-radius: 6px; cursor: pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.1" y2="15.9"></line><line x1="14.5" y1="14.5" x2="20" y2="20"></line><line x1="8.1" y1="8.1" x2="12" y2="12"></line></svg></button>
+</div>
+<div style="width: 1px; height: 28px; margin: 0 4px; background: #2E3137"></div>
+<label for="fa-grid" style="font-size: 14px; color: #A3A6AD">Grid</label>
+<select id="fa-grid" title="Snap and default note length" style="height: 40px; width: 120px; box-sizing: border-box; padding: 0 10px; background: #0F1012; border: 1px solid #34373D; border-radius: 8px; color: #E8E6E1; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 15px"><option>1/16</option><option>Bar</option><option>1/2</option><option>1/4 (beat)</option><option>1/8</option><option>1/32</option><option>1/8T</option><option>1/16T</option><option>Off</option></select>
+<div style="flex-grow: 1"></div>
+<button aria-label="Piano roll help" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: transparent; color: #C9CBD0; border: 1px solid #34373D; border-radius: 8px; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 16px; font-weight: 600; cursor: pointer">?</button>
+</div>
+
+<main style="flex-grow: 1; min-height: 0; box-sizing: border-box; padding: 20px 24px; display: flex; gap: 20px">
+
+<section aria-label="Piano roll" style="flex-grow: 1; min-width: 0; background: #17181B; border: 1px solid #25272C; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column">
+<div style="height: 40px; flex-shrink: 0; display: flex; border-bottom: 1px solid #2E3137; background: #131417">
+<div style="width: 72px; flex-shrink: 0; border-right: 1px solid #2E3137"></div>
+<div style="position: relative; flex-grow: 1; overflow: hidden">
+<sc-for list="{{beats}}" as="b" hint-placeholder-count="20">
+<div style="position: absolute; left: {{b.left}}px; bottom: 0; width: 1px; height: 8px; background: #4A4E56"></div>
+</sc-for>
+<sc-for list="{{bars}}" as="k" hint-placeholder-count="6">
+<div style="position: absolute; top: 0; bottom: 0; left: {{k.left}}px; box-sizing: border-box; padding: 5px 0 0 6px; border-left: 1px solid #6B6F77; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; font-weight: 500; color: #E8E6E1">{{k.label}}</div>
+</sc-for>
+<div aria-label="Loop start" style="position: absolute; left: {{loop.s}}px; bottom: 0; width: 18px; height: 18px; border-radius: 0 4px 0 0; background: #4A4E56; color: #E8E6E1; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; cursor: ew-resize">S</div>
+<div aria-label="Loop end" style="position: absolute; left: {{loop.eHandle}}px; bottom: 0; width: 18px; height: 18px; border-radius: 4px 0 0 0; background: #4A4E56; color: #E8E6E1; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; cursor: ew-resize">E</div>
+<div style="position: absolute; left: 720px; bottom: 0; margin-left: -7px; width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 10px solid #F4F2EE"></div>
+</div>
+</div>
+<div style="position: relative; flex-grow: 1; min-height: 0; display: flex; overflow: hidden">
+<div style="width: 72px; flex-shrink: 0; display: flex; flex-direction: column; background: #0F1012; border-right: 1px solid #2E3137">
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="31">
+<div style="position: relative; height: 24px; flex-shrink: 0; box-sizing: border-box; border-bottom: 1px solid #0F1012; display: flex">
+<div style="flex-grow: 1; margin-right: {{r.inset}}px; background: {{r.keyBg}}; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; color: {{r.keyFg}}; white-space: nowrap">{{r.label}}</div>
+<div style="position: absolute; right: 0; top: 0; bottom: 1px; width: 4px; background: {{r.bar}}"></div>
+</div>
+</sc-for>
+</div>
+<div style="position: relative; flex-grow: 1; min-width: 0; overflow: hidden">
+<div style="display: flex; flex-direction: column">
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="31">
+<div style="height: 24px; flex-shrink: 0; box-sizing: border-box; border-bottom: 1px solid #1F2125; background: {{r.laneBg}}"></div>
+</sc-for>
+</div>
+<div style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; pointer-events: none; background-image: linear-gradient(to right, #4A4E56 1px, transparent 1px), linear-gradient(to right, #2E3137 1px, transparent 1px), linear-gradient(to right, #1F2125 1px, transparent 1px); background-size: 240px 100%, 60px 100%, 15px 100%"></div>
+<sc-for list="{{notes}}" as="n" hint-placeholder-count="18">
+<div style="position: absolute; left: {{n.left}}px; top: {{n.top}}px; width: {{n.width}}px; height: 18px; box-sizing: border-box; border-radius: 3px; background: {{n.fill}}; border: {{n.ring}}"></div>
+</sc-for>
+<div aria-hidden="true" style="position: absolute; left: {{box.left}}px; top: {{box.top}}px; width: {{box.width}}px; height: {{box.height}}px; box-sizing: border-box; border: 1.5px dashed #5FB3E8; border-radius: 4px; background: rgba(95,179,232,0.08)"></div>
+<div style="position: absolute; left: 720px; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: #F4F2EE; opacity: 0.85"></div>
+<div role="menu" aria-label="Note actions" style="position: absolute; left: 448px; top: 150px; width: 250px; box-sizing: border-box; padding: 6px; background: #1F2125; border: 1px solid #34373D; border-radius: 10px; box-shadow: 0 12px 32px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 2px">
+<div role="menuitem" style="height: 36px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; background: #2A2D33; border-radius: 6px; font-size: 14px; color: #F4F2EE"><span>Cut</span><span style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; color: #A3A6AD">Ctrl+X</span></div>
+<div role="menuitem" style="height: 36px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; border-radius: 6px; font-size: 14px; color: #E8E6E1"><span>Copy</span><span style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; color: #A3A6AD">Ctrl+C</span></div>
+<div role="menuitem" style="height: 36px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; border-radius: 6px; font-size: 14px; color: #E8E6E1"><span>Paste at 4.1.1</span><span style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; color: #A3A6AD">Ctrl+V</span></div>
+<div role="menuitem" style="height: 36px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; border-radius: 6px; font-size: 14px; color: #F0625F"><span>Delete</span><span style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; color: #A3A6AD">Del</span></div>
+<div role="separator" style="height: 1px; margin: 4px 6px; background: #34373D"></div>
+<div role="menuitem" style="height: 36px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; border-radius: 6px; font-size: 14px; color: #E8E6E1"><span>Select all</span><span style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; color: #A3A6AD">Ctrl+A</span></div>
+</div>
+<div style="position: absolute; right: 4px; top: 80px; width: 6px; height: 360px; border-radius: 3px; background: #34373D"></div>
+</div>
+</div>
+</section>
+
+<aside aria-label="Analysis results" style="width: 440px; flex-shrink: 0; box-sizing: border-box; padding: 18px 20px; background: #17181B; border: 1px solid #25272C; border-radius: 12px; display: flex; flex-direction: column; gap: 14px; min-height: 0; overflow: hidden">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A6AD">Results</div>
+<button aria-label="Collapse panel" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: transparent; color: #C9CBD0; border: 1px solid #34373D; border-radius: 8px; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"></polyline></svg></button>
+</div>
+<div style="display: flex; flex-direction: column; border: 1px solid #25272C; border-radius: 8px; overflow: hidden; min-height: 0">
+<div style="height: 34px; flex-shrink: 0; display: grid; grid-template-columns: 56px 1fr 1fr 104px; align-items: center; column-gap: 8px; padding: 0 14px; background: #131417; border-bottom: 1px solid #2E3137; font-size: 13px; color: #A3A6AD">
+<div>Note</div><div style="text-align: right">Start (ms)</div><div style="text-align: right">Duration (ms)</div><div>Confidence</div>
+</div>
+<sc-for list="{{table}}" as="t" hint-placeholder-count="18">
+<div style="height: 33px; flex-shrink: 0; box-sizing: border-box; display: grid; grid-template-columns: 56px 1fr 1fr 104px; align-items: center; column-gap: 8px; padding: 0 14px; border-bottom: 1px solid #1F2125; background: {{t.bg}}; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 14px; color: {{t.fg}}">
+<div style="font-weight: {{t.weight}}">{{t.note}}</div>
+<div style="text-align: right">{{t.start}}</div>
+<div style="text-align: right">{{t.dur}}</div>
+<div style="display: flex; align-items: center; gap: 8px"><div style="width: 44px; height: 6px; border-radius: 3px; background: #2A2D33; overflow: hidden"><div style="width: {{t.confW}}px; height: 6px; background: {{t.confFill}}"></div></div><div style="font-size: 13px">{{t.conf}}</div></div>
+</div>
+</sc-for>
+</div>
+</aside>
+
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F2A541","options":["#F2A541","#E8744F","#9D8CF2","#6FD08C"]},"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var accent = this.props.accent ?? '#F2A541';
+    var PC = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+    var TOP = 77, BOTTOM = 47, BEAT = 60;
+    function nm(m) { return PC[m % 12] + (Math.floor(m / 12) - 1); }
+    var data = [[64,0,1],[67,1,1],[72,2,1.5],[71,3.5,0.5],[69,4,1,1],[72,5,1,1],[69,6,1,1],[65,7,1],[67,8,1.5],[71,9.5,0.5],[74,10,1],[71,11,1],[72,12,3],[67,15,1],[64,16,2],[62,18,1],[64,19,1],[60,20,2]];
+    var selKeys = data.filter(function (d) { return d[3]; }).map(function (d) { return d[0]; });
+    var rows = [];
+    for (var m = TOP; m >= BOTTOM; m--) {
+      var black = PC[m % 12].indexOf('#') > -1;
+      rows.push({ label: nm(m), keyBg: black ? '#2A2C31' : '#D9D6CF', keyFg: black ? '#C9CBD0' : '#3A3D44', inset: black ? 26 : 0, bar: selKeys.indexOf(m) > -1 ? '#5FB3E8' : 'transparent', laneBg: black ? '#141518' : '#1A1C20' });
+    }
+    var notes = data.map(function (d) {
+      return { left: Math.round(d[1] * BEAT) + 1, top: (TOP - d[0]) * 24 + 3, width: Math.round(d[2] * BEAT) - 2, fill: d[3] ? '#5FB3E8' : accent, ring: d[3] ? '1.5px solid #DCEFFB' : '0 solid transparent' };
+    });
+    var bars = [], beats = [];
+    for (var b = 0; b < 6; b++) { bars.push({ left: b * 4 * BEAT, label: String(b + 1) }); }
+    for (var i = 1; i < 24; i++) { if (i % 4 !== 0) { beats.push({ left: i * BEAT }); } }
+    var loop = { s: 4 * BEAT, eHandle: 16 * BEAT - 18 };
+    var box = { left: 4 * BEAT - 8, top: (TOP - 72) * 24 - 6, width: 3 * BEAT + 16, height: (72 - 69 + 1) * 24 + 12 };
+    var conf = [0.97,0.91,0.95,0.84,0.96,0.93,0.94,0.89,0.92,0.86,0.95,0.90,0.97,0.88,0.93,0.87,0.91,0.95];
+    var table = data.map(function (d, i) {
+      var sel = !!d[3];
+      return { note: nm(d[0]), start: String(Math.round(d[1] * 500)), dur: String(Math.round(d[2] * 500)), conf: conf[i].toFixed(2), confW: Math.round(conf[i] * 44), confFill: sel ? '#5FB3E8' : '#8A8E96', bg: sel ? '#13232E' : 'transparent', fg: sel ? '#DCEFFB' : '#E8E6E1', weight: sel ? 600 : 400 };
+    });
+    return { accent: accent, rows: rows, notes: notes, bars: bars, beats: beats, loop: loop, box: box, table: table };
+  }
+}
+</script>
+</body>
+</html>

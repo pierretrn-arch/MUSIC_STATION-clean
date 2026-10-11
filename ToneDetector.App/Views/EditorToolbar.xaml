@@ -1,0 +1,88 @@
+<UserControl x:Class="ToneDetector.App.Views.EditorToolbar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="clr-namespace:ToneDetector.App.Views"
+             xmlns:viewModels="clr-namespace:ToneDetector.App.ViewModels"
+             x:Name="Root">
+
+    <!-- Editor tool bar, 56px (Design/LiveTuner.dc.html, FileAnalysis.dc.html): Chord + Apply to
+         selected + selection count, Undo, Redo, the edit tools (Select V, Draw D, Erase E, Split S),
+         Grid, and "?" help. Shared by both tabs: Roll is the tab's piano roll, Target its control. -->
+
+    <Border Background="{StaticResource BgChrome}" BorderBrush="{StaticResource BorderSubtle}" BorderThickness="0,0,0,1" Padding="32,0">
+        <DockPanel>
+            <ToggleButton x:Name="HelpToggle" DockPanel.Dock="Right" AutomationProperties.Name="Piano roll help"
+                          Style="{StaticResource ToggleHelp}" Content="?" VerticalAlignment="Center"/>
+            <Popup DockPanel.Dock="Right" IsOpen="{Binding IsChecked, ElementName=HelpToggle}" StaysOpen="False"
+                   PlacementTarget="{Binding ElementName=HelpToggle}" Placement="Bottom" HorizontalOffset="-380"
+                   VerticalOffset="8" AllowsTransparency="True" Closed="HelpPopup_Closed">
+                <Border Background="{StaticResource SurfaceRaised}" BorderBrush="{StaticResource Border}" BorderThickness="1"
+                        CornerRadius="{StaticResource RadiusMd}" Padding="16" Width="420">
+                    <TextBlock Style="{StaticResource Label}" Foreground="{StaticResource InkMuted}" TextWrapping="Wrap"
+                               Text="{x:Static views:EditorToolbar.HelpText}"/>
+                </Border>
+            </Popup>
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Style="{StaticResource BarLabel}" Text="Chord" Margin="0,0,12,0"/>
+                <ComboBox x:Name="ChordQualityComboBox" Style="{StaticResource Select}" FontFamily="{StaticResource Sans}"
+                          Width="150" Height="40" SelectedIndex="0" AutomationProperties.Name="Chord quality"
+                          ItemsSource="{x:Static views:EditorOptions.ChordQualities}"/>
+                <Button x:Name="ApplyChordButton" Style="{StaticResource ButtonSecondaryCompact}" Content="Apply to selected"
+                        Margin="12,0,0,0" IsEnabled="False" Click="ApplyChordButton_Click"
+                        ToolTip="Turn each selected note into a chord of this quality"/>
+                <TextBlock x:Name="SelectionText" Style="{StaticResource BarLabel}" FontFamily="{StaticResource Mono}"
+                           FontSize="{StaticResource OverlineFontSize}" Foreground="{StaticResource PitchText}" Margin="12,0,0,0"/>
+
+                <Rectangle Width="1" Height="28" Fill="{StaticResource Border}" Margin="16,0"/>
+                <Button Style="{StaticResource ButtonSecondaryCompact}" Command="{Binding Roll.UndoCommand, ElementName=Root}"
+                        AutomationProperties.Name="Undo" ToolTip="Undo (Ctrl+Z)">
+                    <StackPanel Orientation="Horizontal">
+                        <ContentControl Style="{StaticResource Icon}" Content="{StaticResource IconUndo}" Width="16" Height="16"/>
+                        <TextBlock Text="Undo" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource ButtonSecondaryCompact}" Command="{Binding Roll.RedoCommand, ElementName=Root}" Margin="8,0,0,0"
+                        AutomationProperties.Name="Redo" ToolTip="Redo (Ctrl+Y or Ctrl+Shift+Z)">
+                    <StackPanel Orientation="Horizontal">
+                        <ContentControl Style="{StaticResource Icon}" Content="{StaticResource IconRedo}" Width="16" Height="16"/>
+                        <TextBlock Text="Redo" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <Rectangle Width="1" Height="28" Fill="{StaticResource Border}" Margin="16,0"/>
+                <Border Style="{StaticResource SegmentGroup}">
+                    <StackPanel Orientation="Horizontal" AutomationProperties.Name="Edit tools">
+                        <RadioButton Style="{StaticResource ToolSegment}" GroupName="{Binding ToolGroupName, ElementName=Root}"
+                                     IsChecked="{Binding Roll.IsSelectTool, ElementName=Root}" AutomationProperties.Name="Select (V)"
+                                     ToolTip="Select (V): drag a box, Shift-click to add, drag a body to move, drag edges to resize">
+                            <ContentControl Style="{StaticResource Icon}" Content="{StaticResource IconCursor}" Width="17" Height="17"/>
+                        </RadioButton>
+                        <RadioButton Style="{StaticResource ToolSegment}" GroupName="{Binding ToolGroupName, ElementName=Root}" Margin="3,0,0,0"
+                                     IsChecked="{Binding Roll.IsDrawTool, ElementName=Root}" AutomationProperties.Name="Draw (D)"
+                                     ToolTip="Draw (D): click for a note one grid step long, or drag to set its length">
+                            <ContentControl Style="{StaticResource Icon}" Content="{StaticResource IconPencil}" Width="17" Height="17"/>
+                        </RadioButton>
+                        <RadioButton Style="{StaticResource ToolSegment}" GroupName="{Binding ToolGroupName, ElementName=Root}" Margin="3,0,0,0"
+                                     IsChecked="{Binding Roll.IsEraseTool, ElementName=Root}" AutomationProperties.Name="Erase (E)"
+                                     ToolTip="Erase (E): click or drag across notes to delete them">
+                            <ContentControl Style="{StaticResource Icon}" Content="{StaticResource IconEraser}" Width="17" Height="17"/>
+                        </RadioButton>
+                        <RadioButton Style="{StaticResource ToolSegment}" GroupName="{Binding ToolGroupName, ElementName=Root}" Margin="3,0,0,0"
+                                     IsChecked="{Binding Roll.IsSplitTool, ElementName=Root}" AutomationProperties.Name="Split (S)"
+                                     ToolTip="Split (S): click a note to split it at that point">
+                            <ContentControl Style="{StaticResource Icon}" Content="{StaticResource IconScissors}" Width="17" Height="17"/>
+                        </RadioButton>
+                    </StackPanel>
+                </Border>
+
+                <Rectangle Width="1" Height="28" Fill="{StaticResource Border}" Margin="16,0"/>
+                <TextBlock Style="{StaticResource BarLabel}" Text="Grid" Margin="0,0,12,0"/>
+                <ComboBox Style="{StaticResource Select}" FontFamily="{StaticResource Mono}" Width="120" Height="40"
+                          AutomationProperties.Name="Grid" ToolTip="Snap and default note length. Hold Alt while dragging to turn snapping off."
+                          ItemsSource="{x:Static viewModels:PianoRollViewModel.GridOptions}" DisplayMemberPath="Label"
+                          SelectedValuePath="Division" SelectedValue="{Binding Roll.Grid, ElementName=Root}"/>
+            </StackPanel>
+        </DockPanel>
+    </Border>
+</UserControl>

@@ -1,0 +1,212 @@
+<UserControl x:Class="ToneDetector.App.Views.TunerPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:ToneDetector.App.Controls"
+             xmlns:converters="clr-namespace:ToneDetector.App.Converters"
+             xmlns:vm="clr-namespace:ToneDetector.App.ViewModels"
+             x:Name="Root">
+
+    <!-- Tuner panel under the session bar (Design/LiveTuner.dc.html, FileAnalysis.dc.html): the big
+         note, Detected / Target / Offset tiles and the ±50 cent meter, with Collapse tuner and a
+         drag handle to resize. Collapsed it's a 48px strip: status, compact note, Expand tuner.
+         Shared by Live Tuner and File Analysis; DataContext is the MainViewModel (LiveTuner). -->
+
+    <UserControl.Resources>
+        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisibility"/>
+
+        <Style x:Key="TunerTile" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource Bg}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderSubtle}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="{StaticResource RadiusTile}"/>
+            <Setter Property="Padding" Value="18,16"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+        </Style>
+
+        <Style x:Key="TileLabel" TargetType="TextBlock" BasedOn="{StaticResource Label}">
+            <Setter Property="Foreground" Value="{StaticResource InkSubtle}"/>
+        </Style>
+
+        <Style x:Key="TileValue" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource Mono}"/>
+            <Setter Property="FontSize" Value="28"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Foreground" Value="{StaticResource Ink}"/>
+            <Setter Property="TextWrapping" Value="NoWrap"/>
+            <Setter Property="Margin" Value="0,6,0,0"/>
+        </Style>
+
+        <!-- In tune: the offset and its status in PitchText -->
+        <Style x:Key="OffsetValue" TargetType="TextBlock" BasedOn="{StaticResource TileValue}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LiveTuner.TuningState}" Value="{x:Static vm:TuningState.InTune}">
+                    <Setter Property="Foreground" Value="{StaticResource PitchText}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="OffsetStatus" TargetType="TextBlock" BasedOn="{StaticResource Label}">
+            <Setter Property="Foreground" Value="{StaticResource InkMuted}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LiveTuner.TuningState}" Value="{x:Static vm:TuningState.InTune}">
+                    <Setter Property="Foreground" Value="{StaticResource PitchText}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Collapse / Expand tuner: 32px transparent outlined button -->
+        <Style x:Key="TunerToggleButton" TargetType="Button" BasedOn="{StaticResource ButtonSecondaryCompact}">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource InkMuted}"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+
+        <!-- Listening dot and label in the collapsed strip -->
+        <Style x:Key="StatusDot" TargetType="Ellipse">
+            <Setter Property="Fill" Value="{StaticResource InkFaint}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LiveTuner.IsPipelineRunning}" Value="True">
+                    <Setter Property="Fill" Value="{StaticResource Pitch}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="StatusText" TargetType="TextBlock" BasedOn="{StaticResource Label}">
+            <Setter Property="Text" Value="Not listening"/>
+            <Setter Property="Foreground" Value="{StaticResource InkSubtle}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LiveTuner.IsPipelineRunning}" Value="True">
+                    <Setter Property="Text" Value="Listening"/>
+                    <Setter Property="Foreground" Value="{StaticResource PitchText}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Resize handle: 12px BgChrome bar with a 48 x 4 grip -->
+        <Style x:Key="ResizeHandle" TargetType="Thumb">
+            <Setter Property="Cursor" Value="SizeNS"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border Height="12" Background="{StaticResource BgChrome}" BorderBrush="{StaticResource BorderSubtle}"
+                                BorderThickness="0,1">
+                            <Border Width="48" Height="4" CornerRadius="2" Background="{StaticResource BorderStrong}"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <!-- ================= Open ================= -->
+        <StackPanel Visibility="{Binding IsExpanded, ElementName=Root, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid Height="{Binding PanelHeight, ElementName=Root}" Background="{StaticResource Surface}" AutomationProperties.Name="Tuner">
+                <Grid Margin="32,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="190"/>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="640"/>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Big note, or "No pitch" / "Not listening" -->
+                    <Viewbox Grid.Column="0" StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Center"
+                             Visibility="{Binding LiveTuner.HasPitch, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock FontFamily="{StaticResource Mono}" Foreground="{StaticResource InkStrong}"
+                                   AutomationProperties.Name="Detected note">
+                            <Run Text="{Binding LiveTuner.NoteLetter, Mode=OneWay}" FontSize="128" FontWeight="Medium"/><Run
+                                 Text="{Binding LiveTuner.NoteOctave, Mode=OneWay}" FontSize="52" Foreground="{StaticResource InkSubtle}"/>
+                        </TextBlock>
+                    </Viewbox>
+                    <TextBlock Grid.Column="0" Style="{StaticResource Readout}" Foreground="{StaticResource InkSubtle}"
+                               VerticalAlignment="Center" Text="{Binding LiveTuner.NoPitchText, Mode=OneWay}"
+                               Visibility="{Binding LiveTuner.HasPitch, Converter={StaticResource InverseBoolToVisibility}}"/>
+
+                    <!-- Detected / Target / Offset -->
+                    <Grid Grid.Column="2" VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Style="{StaticResource TunerTile}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource TileLabel}" Text="Detected"/>
+                                <TextBlock Style="{StaticResource TileValue}"><Run Text="{Binding LiveTuner.DetectedFrequencyText, Mode=OneWay}"/><Run
+                                    Text=" Hz" FontSize="16" FontWeight="Normal" Foreground="{StaticResource InkSubtle}"/></TextBlock>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="2" Style="{StaticResource TunerTile}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource TileLabel}" Text="Target"/>
+                                <TextBlock Style="{StaticResource TileValue}"><Run Text="{Binding LiveTuner.TargetFrequencyText, Mode=OneWay}"/><Run
+                                    Text=" Hz" FontSize="16" FontWeight="Normal" Foreground="{StaticResource InkSubtle}"/></TextBlock>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="4" Style="{StaticResource TunerTile}">
+                            <StackPanel>
+                                <!-- "In tune" sits next to the label so the value never wraps -->
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Right" Style="{StaticResource OffsetStatus}"
+                                               Text="{Binding LiveTuner.OffsetStatusText, Mode=OneWay}"/>
+                                    <TextBlock Style="{StaticResource TileLabel}" Text="Offset"/>
+                                </DockPanel>
+                                <TextBlock Style="{StaticResource OffsetValue}"><Run Text="{Binding LiveTuner.OffsetText, Mode=OneWay}"/><Run
+                                    Text=" cents" FontSize="16" FontWeight="Normal" Foreground="{StaticResource InkSubtle}"/></TextBlock>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- ±50 cent meter -->
+                    <controls:TuningMeter Grid.Column="4" VerticalAlignment="Center" Margin="0,28,0,0"
+                                          Cents="{Binding LiveTuner.DisplayCents, Mode=OneWay}"
+                                          InTuneCents="{x:Static vm:LiveTunerViewModel.InTuneToleranceCents}"
+                                          TextElement.FontFamily="{StaticResource Mono}"
+                                          AutomationProperties.Name="Tuning meter"/>
+                </Grid>
+
+                <Button Style="{StaticResource TunerToggleButton}" HorizontalAlignment="Right" VerticalAlignment="Top"
+                        Margin="0,16,32,0" Click="Collapse_Click" AutomationProperties.Name="Collapse tuner">
+                    <StackPanel Orientation="Horizontal">
+                        <ContentControl Style="{StaticResource Icon}" Content="{StaticResource IconChevronUp}" Width="14" Height="14" Tag="2.0"/>
+                        <TextBlock Text="Collapse tuner" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+            <Thumb Style="{StaticResource ResizeHandle}" DragDelta="ResizeHandle_DragDelta"
+                   AutomationProperties.Name="Resize tuner" ToolTip="Drag to resize the tuner"/>
+        </StackPanel>
+
+        <!-- ================= Collapsed: 48px strip ================= -->
+        <Border Height="48" Background="{StaticResource Surface}" BorderBrush="{StaticResource BorderSubtle}" BorderThickness="0,0,0,1"
+                Padding="32,0" AutomationProperties.Name="Tuner (collapsed)"
+                Visibility="{Binding IsExpanded, ElementName=Root, Converter={StaticResource InverseBoolToVisibility}}">
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Style="{StaticResource TunerToggleButton}" VerticalAlignment="Center"
+                        Click="Expand_Click" AutomationProperties.Name="Expand tuner">
+                    <StackPanel Orientation="Horizontal">
+                        <ContentControl Style="{StaticResource Icon}" Content="{StaticResource IconChevronDown}" Width="14" Height="14" Tag="2.0"/>
+                        <TextBlock Text="Expand tuner" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="TUNER" FontFamily="{StaticResource Mono}" FontSize="13" Foreground="{StaticResource InkSubtle}"
+                               VerticalAlignment="Center"/>
+                    <Rectangle Width="1" Height="18" Fill="{StaticResource Border}" Margin="14,0"/>
+                    <Ellipse Style="{StaticResource StatusDot}" Width="8" Height="8" VerticalAlignment="Center"/>
+                    <TextBlock Style="{StaticResource StatusText}" Margin="14,0,0,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding LiveTuner.CompactPitchText, Mode=OneWay}" FontFamily="{StaticResource Mono}" FontSize="13"
+                               Foreground="{StaticResource InkSubtle}" Margin="14,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>

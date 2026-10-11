@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Music Station - Load MIDI parts</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#0F1012;font-family:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;color:#E8E6E1}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="width: 760px; height: 720px; box-sizing: border-box; padding: 40px; background: #0B0C0E; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; color: #E8E6E1">
+<div role="dialog" aria-label="Load MIDI parts" style="width: 680px; box-sizing: border-box; padding: 28px; background: #17181B; border: 1px solid #34373D; border-radius: 12px; box-shadow: 0 16px 48px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 22px; line-height: 28px; font-weight: 600">Load MIDI parts</h1>
+<p style="margin: 0; font-size: 15px; line-height: 22px; color: #C9CBD0">Each ticked part becomes its own track, with the closest instrument picked for it. You can change instruments after loading.</p>
+</div>
+<button aria-label="Close" style="width: 36px; height: 36px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: transparent; color: #C9CBD0; border: 1px solid #34373D; border-radius: 8px; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg></button>
+</div>
+<div style="display: flex; flex-direction: column; border: 1px solid #25272C; border-radius: 8px; overflow: hidden">
+<div style="height: 34px; display: grid; grid-template-columns: 28px 1fr 90px 170px; align-items: center; column-gap: 10px; padding: 0 14px; background: #131417; border-bottom: 1px solid #2E3137; font-size: 13px; color: #A3A6AD">
+<div></div><div>Part</div><div style="text-align: right">Notes</div><div>Instrument</div>
+</div>
+<sc-for list="{{parts}}" as="p" hint-placeholder-count="9">
+<label style="height: 40px; box-sizing: border-box; display: grid; grid-template-columns: 28px 1fr 90px 170px; align-items: center; column-gap: 10px; padding: 0 14px; border-bottom: 1px solid #1F2125; opacity: {{p.dim}}; cursor: pointer">
+<input type="checkbox" checked="{{p.on}}" style="width: 16px; height: 16px; margin: 0; accent-color: #5FB3E8">
+<div style="display: flex; align-items: center; gap: 10px; min-width: 0"><div style="width: 12px; height: 12px; flex-shrink: 0; border-radius: 3px; background: {{p.color}}"></div><div style="font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.name}}</div></div>
+<div style="text-align: right; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; color: #C9CBD0">{{p.count}}</div>
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; color: {{p.instFg}}">{{p.inst}}</div>
+</label>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between">
+<div style="font-size: 14px; color: #A3A6AD">6 of 9 parts ticked</div>
+<div style="display: flex; gap: 10px">
+<button style="height: 44px; padding: 0 18px; background: #1F2125; color: #E8E6E1; border: 1px solid #34373D; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer">Cancel</button>
+<button style="height: 44px; padding: 0 18px; background: {{accent}}; color: #1A1307; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer">Load 6 tracks</button>
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F2A541","options":["#F2A541","#E8744F","#9D8CF2","#6FD08C"]},"$preview":{"width":760,"height":720}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var accent = this.props.accent ?? '#F2A541';
+    var palette = [accent, '#E8739A', '#A98BF5', '#5CC98A', '#D6B48C', '#3FC1B0'];
+    var P = [
+      ['untitled · channel 1', 333, '[Piano]', true],
+      ['untitled · channel 2', 541, '[Strings]', true],
+      ['untitled · channel 3', 33, '[Instrument]', false],
+      ['untitled · channel 4', 1832, '[Guitar]', true],
+      ['untitled · channel 5', 671, '[Bass]', true],
+      ['untitled · channel 6', 12, '[Instrument]', false],
+      ['untitled · channel 7', 239, '[Instrument]', false],
+      ['untitled · drums (channel 10)', 1641, '[Drum kit]', true],
+      ['untitled · channel 16', 229, '[Pad]', true]
+    ];
+    var k = 0;
+    var parts = P.map(function (p) {
+      var c = p[3] ? palette[k++] : '#34373D';
+      return { name: p[0], count: String(p[1]), inst: p[2], on: p[3], dim: p[3] ? 1 : 0.55, color: c, instFg: p[3] ? '#E8E6E1' : '#A3A6AD' };
+    });
+    return { accent: accent, parts: parts };
+  }
+}
+</script>
+</body>
+</html>

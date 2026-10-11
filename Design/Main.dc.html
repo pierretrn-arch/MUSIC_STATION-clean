@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Music Station - Home</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#0F1012;font-family:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;color:#E8E6E1}
+a{color:#5FB3E8}a:hover{color:#8CCBF0}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="width: 1920px; height: 1080px; box-sizing: border-box; background: #0F1012; display: flex; flex-direction: column; font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; color: #E8E6E1">
+
+<header style="height: 72px; box-sizing: border-box; padding: 0 32px; display: flex; align-items: center; border-bottom: 1px solid #25272C; background: #131417">
+<div style="display: flex; align-items: center; gap: 14px; flex-shrink: 0">
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="{{accent}}" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="12" x2="5" y2="20"></line><line x1="11" y1="7" x2="11" y2="25"></line><line x1="17" y1="3" x2="17" y2="29"></line><line x1="23" y1="9" x2="23" y2="23"></line><line x1="29" y1="13" x2="29" y2="19"></line></svg>
+<div style="font-size: 22px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap">Music Station</div>
+</div>
+<nav role="tablist" aria-label="Main" style="height: 72px; margin-left: 40px; display: flex; align-items: stretch; gap: 4px">
+<div style="position: relative; display: flex; align-items: center">
+<button role="tab" aria-selected="true" style="height: 40px; padding: 0 16px; border: none; border-radius: 8px; background: transparent; color: #F4F2EE; font-size: 15px; font-weight: 600; cursor: pointer; white-space: nowrap">Home</button>
+<div style="position: absolute; left: 16px; right: 16px; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: {{accent}}"></div>
+</div>
+<div style="display: flex; align-items: center"><button role="tab" aria-selected="false" style="height: 40px; padding: 0 16px; border: none; border-radius: 8px; background: transparent; color: #C9CBD0; font-size: 15px; font-weight: 500; cursor: pointer; white-space: nowrap">Live Tuner</button></div>
+<div style="display: flex; align-items: center"><button role="tab" aria-selected="false" style="height: 40px; padding: 0 16px; border: none; border-radius: 8px; background: transparent; color: #C9CBD0; font-size: 15px; font-weight: 500; cursor: pointer; white-space: nowrap">File Analysis</button></div>
+<div style="display: flex; align-items: center"><button role="tab" aria-selected="false" style="height: 40px; padding: 0 16px; border: none; border-radius: 8px; background: transparent; color: #C9CBD0; font-size: 15px; font-weight: 500; cursor: pointer; white-space: nowrap">Settings</button></div>
+</nav>
+<div style="flex-grow: 1"></div>
+<div style="display: flex; align-items: center; gap: 10px; margin-right: 20px; min-width: 0; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 14px; color: #C9CBD0">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A6AD" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0"></path><line x1="12" y1="18" x2="12" y2="21"></line></svg>
+<div style="max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">[Input device]</div>
+<div style="color: #6B6F77">·</div>
+<div style="white-space: nowrap">[Sample rate]</div>
+</div>
+<div role="status" style="width: 260px; height: 40px; box-sizing: border-box; flex-shrink: 0; padding: 0 16px; display: flex; align-items: center; gap: 10px; border-radius: 999px; background: #13232E">
+<div style="width: 8px; height: 8px; flex-shrink: 0; border-radius: 50%; background: #5FB3E8"></div>
+<div style="font-size: 14px; color: #8CCBF0; white-space: nowrap">Listening</div>
+<div style="width: 1px; height: 18px; background: #24475C"></div>
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 18px; font-weight: 500; color: #F4F2EE">A4</div>
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; color: #8CCBF0; white-space: nowrap">in tune</div>
+</div>
+</header>
+
+<main style="flex-grow: 1; box-sizing: border-box; padding: 32px; display: flex; gap: 24px; min-height: 0">
+
+<section aria-label="Projects" style="width: 520px; flex-shrink: 0; box-sizing: border-box; padding: 28px; background: #17181B; border: 1px solid #25272C; border-radius: 12px; display: flex; flex-direction: column; gap: 20px; overflow: hidden">
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A6AD">Projects</div>
+<div style="display: flex; gap: 12px">
+<button style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; gap: 10px; background: {{accent}}; color: #1A1307; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>New project</button>
+<button style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; gap: 10px; background: #1F2125; color: #E8E6E1; border: 1px solid #34373D; border-radius: 8px; font-size: 16px; font-weight: 500; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>Open project</button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label for="project-search" style="font-size: 14px; color: #A3A6AD">Search projects</label>
+<input id="project-search" type="search" placeholder="Type a project name" style="height: 44px; box-sizing: border-box; padding: 0 14px; background: #0F1012; border: 1px solid #34373D; border-radius: 8px; color: #E8E6E1; font-family: inherit; font-size: 15px">
+</div>
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A6AD; margin-top: 4px">Recent</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<button style="height: 72px; box-sizing: border-box; padding: 0 16px; display: flex; align-items: center; gap: 16px; background: #1F2125; border: 1px solid #3A3D44; border-radius: 10px; color: #E8E6E1; text-align: left; cursor: pointer">
+<div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 8px; background: #2A2418; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px"><div style="font-size: 16px; font-weight: 500">[Project name 1]</div><div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; color: #A3A6AD">[Tracks] · [Last opened]</div></div>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A3A6AD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"></polyline></svg>
+</button>
+<button style="height: 72px; box-sizing: border-box; padding: 0 16px; display: flex; align-items: center; gap: 16px; background: transparent; border: 1px solid #25272C; border-radius: 10px; color: #E8E6E1; text-align: left; cursor: pointer">
+<div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 8px; background: #1F2125; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A3A6AD" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px"><div style="font-size: 16px; font-weight: 500">[Project name 2]</div><div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; color: #A3A6AD">[Tracks] · [Last opened]</div></div>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A3A6AD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"></polyline></svg>
+</button>
+<button style="height: 72px; box-sizing: border-box; padding: 0 16px; display: flex; align-items: center; gap: 16px; background: transparent; border: 1px solid #25272C; border-radius: 10px; color: #E8E6E1; text-align: left; cursor: pointer">
+<div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 8px; background: #1F2125; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A3A6AD" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px"><div style="font-size: 16px; font-weight: 500">[Project name 3]</div><div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; color: #A3A6AD">[Tracks] · [Last opened]</div></div>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A3A6AD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"></polyline></svg>
+</button>
+<button style="height: 72px; box-sizing: border-box; padding: 0 16px; display: flex; align-items: center; gap: 16px; background: transparent; border: 1px solid #25272C; border-radius: 10px; color: #E8E6E1; text-align: left; cursor: pointer">
+<div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 8px; background: #1F2125; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A3A6AD" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px"><div style="font-size: 16px; font-weight: 500">[Project name 4]</div><div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; color: #A3A6AD">[Tracks] · [Last opened]</div></div>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A3A6AD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"></polyline></svg>
+</button>
+<button style="height: 72px; box-sizing: border-box; padding: 0 16px; display: flex; align-items: center; gap: 16px; background: transparent; border: 1px solid #25272C; border-radius: 10px; color: #E8E6E1; text-align: left; cursor: pointer">
+<div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 8px; background: #1F2125; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A3A6AD" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px"><div style="font-size: 16px; font-weight: 500">[Project name 5]</div><div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; color: #A3A6AD">[Tracks] · [Last opened]</div></div>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A3A6AD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"></polyline></svg>
+</button>
+<button style="height: 72px; box-sizing: border-box; padding: 0 16px; display: flex; align-items: center; gap: 16px; background: transparent; border: 1px solid #25272C; border-radius: 10px; color: #E8E6E1; text-align: left; cursor: pointer">
+<div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 8px; background: #1F2125; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A3A6AD" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px"><div style="font-size: 16px; font-weight: 500">[Project name 6]</div><div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; color: #A3A6AD">[Tracks] · [Last opened]</div></div>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A3A6AD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"></polyline></svg>
+</button>
+</div>
+</section>
+
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 24px; min-width: 0">
+
+<section aria-label="Live pitch detection" style="height: 560px; box-sizing: border-box; padding: 28px 32px; background: #17181B; border: 1px solid #25272C; border-radius: 12px; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<div style="display: flex; align-items: center; gap: 16px">
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A6AD">Live pitch detection</div>
+</div>
+<div style="display: flex; align-items: center; gap: 12px">
+<label for="input-device" style="font-size: 14px; color: #A3A6AD">Input</label>
+<select id="input-device" style="height: 44px; width: 260px; box-sizing: border-box; padding: 0 12px; background: #0F1012; border: 1px solid #34373D; border-radius: 8px; color: #E8E6E1; font-family: inherit; font-size: 15px"><option>[Input device]</option></select>
+<button style="height: 44px; padding: 0 18px; display: flex; align-items: center; gap: 8px; background: #1F2125; border: 1px solid #34373D; border-radius: 8px; color: #E8E6E1; font-size: 15px; font-weight: 500; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"></rect></svg>Stop listening</button>
+</div>
+</div>
+
+<div style="display: flex; align-items: center; gap: 56px; height: 196px">
+<div style="display: flex; align-items: baseline; gap: 4px; font-family: 'IBM Plex Mono', Consolas, monospace; line-height: 1">
+<div style="font-size: 176px; font-weight: 500; color: #F4F2EE; letter-spacing: -0.04em">A</div>
+<div style="font-size: 72px; font-weight: 400; color: #A3A6AD">4</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; flex-grow: 1">
+<div style="padding: 18px 20px; background: #0F1012; border: 1px solid #25272C; border-radius: 10px; display: flex; flex-direction: column; gap: 8px"><div style="font-size: 14px; color: #A3A6AD">Detected</div><div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 32px; font-weight: 500">440.51 <span style="font-size: 18px; color: #A3A6AD">Hz</span></div></div>
+<div style="padding: 18px 20px; background: #0F1012; border: 1px solid #25272C; border-radius: 10px; display: flex; flex-direction: column; gap: 8px"><div style="font-size: 14px; color: #A3A6AD">Target</div><div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 32px; font-weight: 500">440.00 <span style="font-size: 18px; color: #A3A6AD">Hz</span></div></div>
+<div style="padding: 18px 20px; background: #0F1012; border: 1px solid #25272C; border-radius: 10px; display: flex; flex-direction: column; gap: 8px"><div style="font-size: 14px; color: #A3A6AD">Offset</div><div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 32px; font-weight: 500; color: #8CCBF0">+2 <span style="font-size: 18px; color: #A3A6AD">cents · in tune</span></div></div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<svg viewBox="0 0 1000 56" width="100%" height="56" aria-label="Tuning meter, plus 2 cents">
+<rect x="0" y="8" width="1000" height="40" rx="6" fill="#0F1012"></rect>
+<rect x="452" y="8" width="96" height="40" fill="#5FB3E8" fill-opacity="0.16"></rect>
+<line x1="20" y1="20" x2="20" y2="36" stroke="#4A4E56" stroke-width="2"></line>
+<line x1="116" y1="24" x2="116" y2="32" stroke="#4A4E56" stroke-width="2"></line>
+<line x1="212" y1="24" x2="212" y2="32" stroke="#4A4E56" stroke-width="2"></line>
+<line x1="260" y1="20" x2="260" y2="36" stroke="#4A4E56" stroke-width="2"></line>
+<line x1="308" y1="24" x2="308" y2="32" stroke="#4A4E56" stroke-width="2"></line>
+<line x1="404" y1="24" x2="404" y2="32" stroke="#4A4E56" stroke-width="2"></line>
+<line x1="500" y1="14" x2="500" y2="42" stroke="#8A8E96" stroke-width="2"></line>
+<line x1="596" y1="24" x2="596" y2="32" stroke="#4A4E56" stroke-width="2"></line>
+<line x1="692" y1="24" x2="692" y2="32" stroke="#4A4E56" stroke-width="2"></line>
+<line x1="740" y1="20" x2="740" y2="36" stroke="#4A4E56" stroke-width="2"></line>
+<line x1="788" y1="24" x2="788" y2="32" stroke="#4A4E56" stroke-width="2"></line>
+<line x1="884" y1="24" x2="884" y2="32" stroke="#4A4E56" stroke-width="2"></line>
+<line x1="980" y1="20" x2="980" y2="36" stroke="#4A4E56" stroke-width="2"></line>
+<rect x="515" y="2" width="8" height="52" rx="4" fill="{{accent}}"></rect>
+</svg>
+<div style="display: flex; justify-content: space-between; padding: 0 8px; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; color: #A3A6AD"><span>−50</span><span>−25</span><span>0</span><span>+25</span><span>+50</span></div>
+</div>
+
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 8px; min-height: 0">
+<div style="font-size: 14px; color: #A3A6AD">Pitch history</div>
+<svg viewBox="0 0 1000 84" width="100%" height="84" preserveAspectRatio="none" aria-label="Pitch history trace settling onto target">
+<rect x="0" y="0" width="1000" height="84" rx="6" fill="#0F1012"></rect>
+<line x1="0" y1="42" x2="1000" y2="42" stroke="#5FB3E8" stroke-opacity="0.45" stroke-width="1.5" stroke-dasharray="6 6"></line>
+<polyline points="0,70.8 40,61.2 80,51.6 120,46.8 160,43.6 200,42 240,38.8 280,40.4 320,37.2 360,38.8 400,42 440,45.2 480,43.6 520,40.4 560,38.8 600,37.2 640,38.8 680,40.4 720,38.8 760,37.2 800,38.8 840,40.4 880,38.8 920,38.8 960,37.2 1000,38.8" fill="none" stroke="{{accent}}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></polyline>
+</svg>
+</div>
+</section>
+
+<section aria-label="Piano roll" style="flex-grow: 1; box-sizing: border-box; padding: 28px 32px; background: #17181B; border: 1px solid #25272C; border-radius: 12px; display: flex; gap: 32px; min-height: 0">
+<div style="width: 380px; flex-shrink: 0; display: flex; flex-direction: column; gap: 14px">
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A6AD">Piano roll</div>
+<h2 style="margin: 0; font-size: 30px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2">Jump straight into the editor</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.5; color: #B7BAC0">Open the polyphonic piano roll with a blank pattern, or continue in your last project.</p>
+<div style="flex-grow: 1"></div>
+<div style="display: flex; gap: 12px">
+<button style="height: 52px; padding: 0 22px; display: flex; align-items: center; gap: 10px; background: {{accent}}; color: #1A1307; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer">Open piano roll<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></button>
+<button style="height: 52px; padding: 0 18px; background: #1F2125; color: #E8E6E1; border: 1px solid #34373D; border-radius: 8px; font-size: 16px; font-weight: 500; cursor: pointer">Continue last</button>
+</div>
+</div>
+
+<div style="flex-grow: 1; min-width: 0; background: #121316; border: 1px solid #25272C; border-radius: 10px; overflow: hidden; display: flex">
+<svg viewBox="0 0 836 296" width="100%" height="100%" preserveAspectRatio="xMinYMid slice" aria-label="Piano roll preview">
+<rect x="64" y="4" width="772" height="24" fill="#1B1D21"></rect>
+<rect x="64" y="28" width="772" height="24" fill="#16171A"></rect>
+<rect x="64" y="52" width="772" height="24" fill="#1B1D21"></rect>
+<rect x="64" y="76" width="772" height="24" fill="#16171A"></rect>
+<rect x="64" y="100" width="772" height="24" fill="#1B1D21"></rect>
+<rect x="64" y="124" width="772" height="24" fill="#16171A"></rect>
+<rect x="64" y="148" width="772" height="24" fill="#1B1D21"></rect>
+<rect x="64" y="172" width="772" height="24" fill="#1B1D21"></rect>
+<rect x="64" y="196" width="772" height="24" fill="#16171A"></rect>
+<rect x="64" y="220" width="772" height="24" fill="#1B1D21"></rect>
+<rect x="64" y="244" width="772" height="24" fill="#16171A"></rect>
+<rect x="64" y="268" width="772" height="24" fill="#1B1D21"></rect>
+<line x1="112" y1="4" x2="112" y2="292" stroke="#23252A"></line>
+<line x1="160" y1="4" x2="160" y2="292" stroke="#23252A"></line>
+<line x1="208" y1="4" x2="208" y2="292" stroke="#23252A"></line>
+<line x1="256" y1="4" x2="256" y2="292" stroke="#3A3D44"></line>
+<line x1="304" y1="4" x2="304" y2="292" stroke="#23252A"></line>
+<line x1="352" y1="4" x2="352" y2="292" stroke="#23252A"></line>
+<line x1="400" y1="4" x2="400" y2="292" stroke="#23252A"></line>
+<line x1="448" y1="4" x2="448" y2="292" stroke="#3A3D44"></line>
+<line x1="496" y1="4" x2="496" y2="292" stroke="#23252A"></line>
+<line x1="544" y1="4" x2="544" y2="292" stroke="#23252A"></line>
+<line x1="592" y1="4" x2="592" y2="292" stroke="#23252A"></line>
+<line x1="640" y1="4" x2="640" y2="292" stroke="#3A3D44"></line>
+<line x1="688" y1="4" x2="688" y2="292" stroke="#23252A"></line>
+<line x1="736" y1="4" x2="736" y2="292" stroke="#23252A"></line>
+<line x1="784" y1="4" x2="784" y2="292" stroke="#23252A"></line>
+<rect x="0" y="4" width="64" height="24" fill="#D9D6CF" stroke="#0F1012"></rect>
+<rect x="0" y="28" width="64" height="24" fill="#2A2C31" stroke="#0F1012"></rect>
+<rect x="0" y="52" width="64" height="24" fill="#D9D6CF" stroke="#0F1012"></rect>
+<rect x="0" y="76" width="64" height="24" fill="#2A2C31" stroke="#0F1012"></rect>
+<rect x="0" y="100" width="64" height="24" fill="#D9D6CF" stroke="#0F1012"></rect>
+<rect x="0" y="124" width="64" height="24" fill="#2A2C31" stroke="#0F1012"></rect>
+<rect x="0" y="148" width="64" height="24" fill="#D9D6CF" stroke="#0F1012"></rect>
+<rect x="0" y="172" width="64" height="24" fill="#D9D6CF" stroke="#0F1012"></rect>
+<rect x="0" y="196" width="64" height="24" fill="#2A2C31" stroke="#0F1012"></rect>
+<rect x="0" y="220" width="64" height="24" fill="#D9D6CF" stroke="#0F1012"></rect>
+<rect x="0" y="244" width="64" height="24" fill="#2A2C31" stroke="#0F1012"></rect>
+<rect x="0" y="268" width="64" height="24" fill="#D9D6CF" stroke="#0F1012"></rect>
+<text x="8" y="286" font-family="IBM Plex Mono, Consolas, monospace" font-size="12" fill="#3A3D44">C4</text>
+<rect x="66" y="272" width="172" height="16" rx="3" fill="{{accent}}"></rect>
+<rect x="66" y="176" width="172" height="16" rx="3" fill="{{accent}}"></rect>
+<rect x="66" y="104" width="172" height="16" rx="3" fill="{{accent}}"></rect>
+<rect x="258" y="224" width="172" height="16" rx="3" fill="{{accent}}"></rect>
+<rect x="258" y="152" width="172" height="16" rx="3" fill="{{accent}}"></rect>
+<rect x="258" y="56" width="172" height="16" rx="3" fill="{{accent}}"></rect>
+<rect x="450" y="176" width="124" height="16" rx="3" fill="{{accent}}"></rect>
+<rect x="450" y="104" width="124" height="16" rx="3" fill="{{accent}}"></rect>
+<rect x="450" y="8" width="124" height="16" rx="3" fill="{{accent}}"></rect>
+<rect x="642" y="56" width="172" height="16" rx="3" fill="#5FB3E8" stroke="#DCEFFB" stroke-width="1.5"></rect>
+<rect x="642" y="152" width="172" height="16" rx="3" fill="#5FB3E8" stroke="#DCEFFB" stroke-width="1.5"></rect>
+</svg>
+</div>
+</section>
+
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F2A541","options":["#F2A541","#E8744F","#9D8CF2","#6FD08C"]},"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#F2A541' };
+  }
+}
+</script>
+</body>
+</html>

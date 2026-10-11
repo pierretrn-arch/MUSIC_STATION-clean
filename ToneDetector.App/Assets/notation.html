@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #0A0E17;
+    overflow: hidden;
+    height: 100%;
+  }
+  #scrollHost {
+    width: 100%;
+    height: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+  }
+  #notation {
+    display: inline-block;
+  }
+  #status {
+    position: fixed;
+    top: 4px;
+    left: 8px;
+    color: #4A5266;
+    font: 11px Segoe UI, sans-serif;
+  }
+</style>
+</head>
+<body>
+  <div id="status">loading…</div>
+  <div id="scrollHost"><div id="notation"></div></div>
+
+  <script src="vexflow-min.js"></script>
+  <script>
+    const VF = Vex.Flow;
+
+    // Roughly maps a duration in ms to a VexFlow duration token at a given tempo, snapping to
+    // the nearest 1/32 note. Falls back to a fixed "quarter-note-ish" bucket when bpm is null
+    // (per PLAN.md: "fall back to un-quantized 'roughly correct' durations if BPM null").
+    function quantizeDuration(durationMs, bpm) {
+      const table = [
+        [4, "w"], [3, "hd"], [2, "h"], [1.5, "qd"], [1, "q"],
+        [0.75, "8d"], [0.5, "8"], [0.375, "16d"], [0.25, "16"], [0.125, "32"],
+      ];
+      let beats;
+      if (bpm && bpm > 0) {
+        const msPerBeat = 60000 / bpm;
+        beats = durationMs / msPerBeat;
+      } else {
+        // No tempo yet: treat every event as roughly a quarter note's worth of visual space.
+        beats = 1;
+      }
+      let best = table[table.length - 1];
+      let bestDiff = Infinity;
+      for (const entry of table) {
+        const diff = Math.abs(entry[0] - beats);
+        if (diff < bestDiff) {
+          bestDiff = diff;
+          best = entry;
+        }
+      }
+      return best[1];
+    }
+
+    function noteKey(noteName, octave) {
+      // VexFlow wants e.g. "c#/4" — our note names are already like "C#" or "C".
+      return noteName.toLowerCase() + "/" + octave;
+    }
+
+    function renderTranscript(eventsJson) {
+      try {
+        const payload = JSON.parse(eventsJson);
+        const events = payload.events || [];
+        const bpm = payload.bpm || null;
+
+        const notation = document.getElementById("notation");
+        notation.innerHTML = "";
+
+        if (events.length === 0) {
+          document.getElementById("status").textContent = "waiting for notes…";
+          return;
+        }
+
+        const staveNotes = events.map(evt => {
+          const duration = quantizeDuration(evt.durationMs, bpm);
+          if (evt.type === "Note") {
+            return new VF.StaveNote({ keys: [noteKey(evt.noteName, evt.octave)], duration: duration });
+          }
+          return new VF.StaveNote({ keys: ["b/4"], duration: duration + "r" });
+        });
+
+        const staveWidth = Math.max(400, 60 + staveNotes.length * 55);
+        const renderer = new VF.Renderer(notation, VF.Renderer.Backends.SVG);
+        renderer.resize(staveWidth, 140);
+        const context = renderer.getContext();
+        context.setBackgroundFillStyle("#0A0E17");
+
+        const stave = new VF.Stave(10, 20, staveWidth - 20);
+        stave.addClef("treble");
+        stave.setContext(context).draw();
+
+        const voice = new VF.Voice({ num_beats: staveNotes.length, beat_value: 4 });
+        voice.setStrict(false);
+        voice.addTickables(staveNotes);
+
+        new VF.Formatter().joinVoices([voice]).format([voice], staveWidth - 60);
+        voice.draw(context, stave);
+
+        const scrollHost = document.getElementById("scrollHost");
+        scrollHost.scrollLeft = scrollHost.scrollWidth;
+
+        document.getElementById("status").textContent = events.length + " events";
+      } catch (err) {
+        document.getElementById("status").textContent = "render error: " + err.message;
+      }
+    }
+
+    window.renderTranscript = renderTranscript;
+    document.getElementById("status").textContent = "notation ready";
+    console.log("notation ready");
+    if (window.chrome && window.chrome.webview) {
+      window.chrome.webview.postMessage("notation ready");
+    }
+  </script>
+</body>
+</html>

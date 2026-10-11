@@ -1,0 +1,28 @@
+<UserControl x:Class="ToneDetector.App.Views.HeaderDevice"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="False">
+
+    <!-- Header input device (Header.dc.html): mic, device name (max 260, ellipsis, full name in a
+         tooltip) · sample rate. With no device: "No input device" and no rate. DataContext is the
+         MainViewModel. The name is the part that gives way when space runs short. -->
+
+    <!-- DockPanel sizes to its content and gives the name (last child) whatever width is left -->
+    <DockPanel LastChildFill="True"
+               TextElement.FontFamily="{StaticResource Mono}" TextElement.FontSize="{StaticResource LabelFontSize}"
+               TextElement.Foreground="{StaticResource InkMuted}">
+        <ContentControl DockPanel.Dock="Left" Style="{StaticResource Icon}" Content="{StaticResource IconMicrophone}"
+                        Width="16" Height="16" Foreground="{StaticResource InkSubtle}" Margin="0,0,10,0"
+                        VerticalAlignment="Center"/>
+
+        <TextBlock DockPanel.Dock="Right" Text="{Binding LiveTuner.SampleRateText, Mode=OneWay}" VerticalAlignment="Center"
+                   Visibility="{Binding LiveTuner.HasDevice, Converter={StaticResource BoolToVisibilityConverter}}"/>
+        <!-- Separator dot is decorative (InkFaint) -->
+        <TextBlock DockPanel.Dock="Right" Text="·" Foreground="{StaticResource InkFaint}" Margin="10,0" VerticalAlignment="Center"
+                   Visibility="{Binding LiveTuner.HasDevice, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+        <TextBlock Text="{Binding LiveTuner.DeviceName, Mode=OneWay}"
+                   ToolTip="{Binding LiveTuner.DeviceName, Mode=OneWay}"
+                   MaxWidth="260" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+    </DockPanel>
+</UserControl>

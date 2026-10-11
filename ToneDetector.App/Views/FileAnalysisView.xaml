@@ -1,0 +1,264 @@
+<UserControl x:Class="ToneDetector.App.Views.FileAnalysisView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:ToneDetector.App.Controls"
+             xmlns:converters="clr-namespace:ToneDetector.App.Converters"
+             xmlns:views="clr-namespace:ToneDetector.App.Views"
+             Background="{StaticResource Bg}"
+             Foreground="{StaticResource Ink}"
+             FontFamily="{StaticResource Sans}"
+             FontSize="{StaticResource BodyFontSize}"
+             PreviewKeyDown="View_PreviewKeyDown">
+
+    <!-- File Analysis (Design/FileAnalysis.dc.html, FileTracks.dc.html): session bar (Load file,
+         transport, Tempo, Export ▾), the tuner (collapsed by default here), the shared editor tool
+         bar, then the tracks panel, the editable piano roll and a collapsible 440px Results panel
+         for the selected track, whose clicked row expands into Type / Cents / Mean F0 tiles.
+         DataContext is the MainViewModel; the roll is FileAnalysis.Roll. -->
+
+    <UserControl.Resources>
+        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisibility"/>
+
+        <DataTemplate x:Key="ResultTemplate">
+            <StackPanel>
+                <Grid Height="34" Margin="14,0" TextElement.FontFamily="{StaticResource Mono}"
+                      TextElement.FontSize="{StaticResource LabelFontSize}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="64"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="110"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="NoteCell" Grid.Column="0" Text="{Binding NoteText}" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Text="{Binding StartText}" TextAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Grid.Column="2" Text="{Binding DurationText}" TextAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0,0,0">
+                        <Grid Width="48" Height="6" VerticalAlignment="Center">
+                            <Border Background="{StaticResource SurfaceActive}" CornerRadius="3"/>
+                            <Border x:Name="ConfidenceFill" Width="{Binding ConfidenceBarWidth}" HorizontalAlignment="Left"
+                                    Background="{StaticResource InkSubtle}" CornerRadius="3"/>
+                        </Grid>
+                        <TextBlock Text="{Binding ConfidenceText}" FontSize="{StaticResource OverlineFontSize}" Margin="8,0,0,0"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+                <Grid x:Name="Details" Margin="14,4,6,14" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Style="{StaticResource DetailTile}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource DetailLabel}" Text="Type"/>
+                            <TextBlock Style="{StaticResource DetailValue}" Text="{Binding TypeText}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource DetailTile}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource DetailLabel}" Text="Cents"/>
+                            <TextBlock Style="{StaticResource DetailValue}" Text="{Binding CentsText}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="2" Style="{StaticResource DetailTile}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource DetailLabel}" Text="Mean F0"/>
+                            <TextBlock Style="{StaticResource DetailValue}">
+                                <Run Text="{Binding MeanF0Text, Mode=OneWay}"/><Run Text=" Hz" FontSize="{StaticResource MetaFontSize}"
+                                                                                  Foreground="{StaticResource InkSubtle}"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </StackPanel>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                    <Setter TargetName="Details" Property="Visibility" Value="Visible"/>
+                    <Setter TargetName="NoteCell" Property="FontWeight" Value="SemiBold"/>
+                    <Setter TargetName="ConfidenceFill" Property="Background" Value="{StaticResource Pitch}"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="72"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="56"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ================= Session bar ================= -->
+        <Border Grid.Row="0" Background="{StaticResource Surface}" BorderBrush="{StaticResource BorderSubtle}"
+                BorderThickness="0,0,0,1" Padding="32,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Style="{StaticResource ButtonSecondary}" Height="44" Padding="16,0"
+                            Command="{Binding FileAnalysis.LoadAndAnalyzeCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <ContentControl Style="{StaticResource Icon}" Content="{StaticResource IconFolder}" Width="16" Height="16"/>
+                            <TextBlock Text="Load file" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <StackPanel Margin="16,0,16,0" VerticalAlignment="Center">
+                        <TextBlock Style="{StaticResource Body}" FontWeight="Medium" MaxWidth="320" TextTrimming="CharacterEllipsis"
+                                   Text="{Binding FileAnalysis.LoadedFileName}" ToolTip="{Binding FileAnalysis.LoadedFileName}"
+                                   Visibility="{Binding FileAnalysis.HasFile, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                        <TextBlock Style="{StaticResource Meta}" Foreground="{StaticResource InkSubtle}"
+                                   Text="{Binding FileAnalysis.SummaryText}"
+                                   Visibility="{Binding FileAnalysis.HasFile, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                        <!-- Before the first file, and for decode/analysis errors -->
+                        <TextBlock Style="{StaticResource Label}" Foreground="{StaticResource InkSubtle}" MaxWidth="420"
+                                   TextTrimming="CharacterEllipsis" Text="{Binding FileAnalysis.StatusText}"
+                                   ToolTip="{Binding FileAnalysis.StatusText}"
+                                   Visibility="{Binding FileAnalysis.ShowStatusText, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <views:SessionTransport Grid.Column="2" Roll="{Binding FileAnalysis.Roll}"/>
+
+                <views:TempoControl Grid.Column="4" Roll="{Binding FileAnalysis.Roll}"/>
+
+                <Button Grid.Column="5" Margin="16,0,0,0" Style="{StaticResource ButtonSecondary}" Height="44" Padding="14,0"
+                        controls:MenuButton.OpensContextMenu="True" AutomationProperties.Name="Export">
+                    <StackPanel Orientation="Horizontal">
+                        <ContentControl Style="{StaticResource Icon}" Content="{StaticResource IconDownload}" Width="16" Height="16"/>
+                        <TextBlock Text="Export" Margin="10,0,10,0" VerticalAlignment="Center"/>
+                        <ContentControl Style="{StaticResource Icon}" Content="{StaticResource IconChevronDown}" Width="14" Height="14"/>
+                    </StackPanel>
+                    <Button.ContextMenu>
+                        <ContextMenu Style="{StaticResource MenuPanel}">
+                            <MenuItem Style="{StaticResource MenuEntry}" Header="JSON…" Command="{Binding FileAnalysis.ExportJsonCommand}"/>
+                            <MenuItem Style="{StaticResource MenuEntry}" Header="CSV…" Command="{Binding FileAnalysis.ExportCsvCommand}"/>
+                            <MenuItem Style="{StaticResource MenuEntry}" Header="MIDI…" Command="{Binding FileAnalysis.ExportMidiCommand}"/>
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- ================= Tuner (collapsed by default here) ================= -->
+        <views:TunerPanel Grid.Row="1" IsExpanded="{Binding Visualization.FileAnalysisTunerExpanded}"
+                          PanelHeight="{Binding Visualization.FileAnalysisTunerHeight}"/>
+
+        <!-- ================= Editor tool bar ================= -->
+        <views:EditorToolbar Grid.Row="2" Roll="{Binding FileAnalysis.Roll}" Target="{Binding ElementName=PianoRoll}"/>
+
+        <!-- ================= Tracks · piano roll · Results ================= -->
+        <Grid Grid.Row="3" Margin="24,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <views:TracksPanel Grid.Column="0" Roll="{Binding FileAnalysis.Roll}"/>
+
+            <Border Grid.Column="2" Background="{StaticResource Surface}" BorderBrush="{StaticResource BorderSubtle}"
+                    BorderThickness="1" CornerRadius="{StaticResource RadiusLg}">
+                <Grid controls:RoundedClip.Radius="11">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <controls:PianoRollControl x:Name="PianoRoll" Grid.Row="0" Grid.Column="0"
+                        KeyColumnWidth="72" RulerRowHeight="40" IsLive="False"
+                        Editor="{Binding FileAnalysis.Roll}"
+                        ColorByPitchClass="{Binding Visualization.PianoRollColorByPitchClass}"
+                        AutomationProperties.Name="Piano roll"/>
+                    <ScrollBar Grid.Row="0" Grid.Column="1" Orientation="Vertical" Width="14" Minimum="0" Margin="0,40,0,0"
+                               Maximum="{Binding VerticalScrollMaximum, ElementName=PianoRoll, Mode=OneWay}"
+                               ViewportSize="{Binding VisibleHeight, ElementName=PianoRoll, Mode=OneWay}"
+                               Value="{Binding ViewTop, ElementName=PianoRoll, Mode=TwoWay}"
+                               SmallChange="24" LargeChange="240" AutomationProperties.Name="Scroll notes up and down"/>
+                    <ScrollBar Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Height="14" Minimum="0" Margin="72,0,0,0"
+                               Maximum="{Binding ScrollMaximumBeats, ElementName=PianoRoll, Mode=OneWay}"
+                               ViewportSize="{Binding VisibleBeats, ElementName=PianoRoll, Mode=OneWay}"
+                               Value="{Binding ViewStartBeats, ElementName=PianoRoll, Mode=TwoWay}"
+                               SmallChange="1" LargeChange="4"/>
+                </Grid>
+            </Border>
+
+            <!-- Results panel (440) and its collapsed form (just the expand button) -->
+            <Border x:Name="ResultsPanel" Grid.Column="4" Width="440" Background="{StaticResource Surface}"
+                    BorderBrush="{StaticResource BorderSubtle}" BorderThickness="1" CornerRadius="{StaticResource RadiusLg}" Padding="20">
+                <DockPanel>
+                    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,16">
+                        <Button DockPanel.Dock="Right" Style="{StaticResource ButtonGhost}" AutomationProperties.Name="Collapse panel"
+                                Click="CollapseResults_Click">
+                            <ContentControl Style="{StaticResource Icon}" Content="{StaticResource IconChevronRight}" Width="16" Height="16" Tag="2.0"/>
+                        </Button>
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource CheckInput}" Content="Hide silence rows" Margin="0,0,12,0"
+                                  IsChecked="{Binding FileAnalysis.HideSilenceRows}" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Style="{StaticResource Overline}" Text="RESULTS" VerticalAlignment="Center"/>
+                            <Border Width="10" Height="10" CornerRadius="3" Margin="10,0,0,0" VerticalAlignment="Center"
+                                    Background="{Binding FileAnalysis.Roll.SelectedTrack.ColourBrush}"/>
+                            <TextBlock Style="{StaticResource Label}" Foreground="{StaticResource Ink}" Margin="10,0,0,0" MaxWidth="150"
+                                       TextTrimming="CharacterEllipsis" VerticalAlignment="Center"
+                                       Text="{Binding FileAnalysis.Roll.SelectedTrack.Name}" AutomationProperties.Name="Results track" ToolTip="{Binding FileAnalysis.Roll.SelectedTrack.Name}"/>
+                        </StackPanel>
+                    </DockPanel>
+
+                    <Border BorderBrush="{StaticResource BorderSubtle}" BorderThickness="1" CornerRadius="{StaticResource RadiusMd}">
+                        <DockPanel controls:RoundedClip.Radius="7">
+                            <Border DockPanel.Dock="Top" Height="36" Background="{StaticResource BgChrome}"
+                                    BorderBrush="{StaticResource Border}" BorderThickness="0,0,0,1">
+                                <Grid Margin="14,0" TextElement.FontSize="{StaticResource OverlineFontSize}"
+                                      TextElement.Foreground="{StaticResource InkSubtle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="64"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="110"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Note" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Start (ms)" TextAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <TextBlock Grid.Column="2" Text="Duration (ms)" TextAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <TextBlock Grid.Column="3" Text="Confidence" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                </Grid>
+                            </Border>
+                            <Grid>
+                                <ListBox ItemsSource="{Binding FileAnalysis.Results}" ItemTemplate="{StaticResource ResultTemplate}"
+                                         ItemContainerStyle="{StaticResource ResultItem}" Background="Transparent" BorderThickness="0"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="Results">
+                                    <ListBox.Template>
+                                        <ControlTemplate TargetType="ListBox">
+                                            <ScrollViewer Focusable="False" VerticalScrollBarVisibility="Auto">
+                                                <ItemsPresenter/>
+                                            </ScrollViewer>
+                                        </ControlTemplate>
+                                    </ListBox.Template>
+                                </ListBox>
+                                <TextBlock Style="{StaticResource Label}" Foreground="{StaticResource InkSubtle}" Margin="14"
+                                           Text="{Binding FileAnalysis.EmptyResultsText}"
+                                           Visibility="{Binding FileAnalysis.HasResults, Converter={StaticResource InverseBoolToVisibility}}"/>
+                            </Grid>
+                        </DockPanel>
+                    </Border>
+                </DockPanel>
+            </Border>
+            <Button x:Name="ExpandResultsButton" Grid.Column="4" VerticalAlignment="Top" Visibility="Collapsed"
+                    Style="{StaticResource ButtonGhost}" AutomationProperties.Name="Show results" ToolTip="Show results"
+                    Click="ExpandResults_Click">
+                <ContentControl Style="{StaticResource Icon}" Content="{StaticResource IconChevronLeft}" Width="16" Height="16" Tag="2.0"/>
+            </Button>
+        </Grid>
+    </Grid>
+</UserControl>

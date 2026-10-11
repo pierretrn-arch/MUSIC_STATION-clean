@@ -1,0 +1,24 @@
+# Build outputs
+[Bb]in/
+[Oo]bj/
+publish/
+
+# VstNativeShim native (CMake) build output
+VstNativeShim/build/
+
+# Third-party VST plugin binaries + vendored SDK (not our source; large, downloadable separately)
+VST/
+VstNativeShim/vst3sdk/
+
+# Logs
+*.log
+
+# Visual Studio / user-specific
+.vs/
+*.user
+*.suo
+
+# OS
+Thumbs.db
+.DS_Store
+

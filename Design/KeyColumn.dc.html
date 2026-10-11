@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Music Station - Key column</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#0F1012;font-family:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;color:#E8E6E1}
+</style>
+</helmet>
+<div style="width: 1520px; height: 1000px; box-sizing: border-box; padding: 56px; background: #0F1012; display: flex; flex-direction: column; gap: 40px; font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; color: #E8E6E1">
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A6AD">Component · Live Tuner piano roll</div>
+<h1 style="margin: 0; font-size: 30px; line-height: 36px; font-weight: 600; letter-spacing: -0.01em">Key column</h1>
+<p style="margin: 0; font-size: 16px; line-height: 24px; color: #C9CBD0">Every key named, click to hear it, lights up for the live note and for selected notes.</p>
+</div>
+
+<div style="display: flex; gap: 56px; align-items: flex-start">
+
+<sc-for list="{{exhibits}}" as="ex" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="font-size: 14px; line-height: 20px; color: #C9CBD0; white-space: nowrap">{{ex.caption}}</div>
+<div style="display: flex; border: 1px solid #25272C; border-radius: 8px; overflow: hidden">
+<div style="width: 72px; flex-shrink: 0; display: flex; flex-direction: column; background: #0F1012; border-right: 1px solid #2E3137">
+<sc-for list="{{ex.rows}}" as="r" hint-placeholder-count="25">
+<div style="position: relative; height: {{ex.rowH}}px; box-sizing: border-box; border-bottom: 1px solid #0F1012; display: flex">
+<div style="flex-grow: 1; margin-right: {{r.inset}}px; background: {{r.keyBg}}; display: flex; align-items: center; justify-content: flex-end; gap: 4px; padding-right: 8px; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: {{ex.fontSize}}px; font-weight: {{r.weight}}; color: {{r.keyFg}}; white-space: nowrap">
+<sc-if value="{{r.speaker}}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"></path><path d="M16.5 8.5a5 5 0 0 1 0 7"></path></svg></sc-if>{{r.label}}</div>
+<div style="position: absolute; left: 0; top: 0; bottom: 1px; width: 6px; background: {{r.strip}}"></div>
+<div style="position: absolute; right: 0; top: 0; bottom: 1px; width: 4px; background: {{r.bar}}"></div>
+</div>
+</sc-for>
+</div>
+<div style="position: relative; width: {{ex.laneW}}px; flex-shrink: 0">
+<div style="display: flex; flex-direction: column">
+<sc-for list="{{ex.rows}}" as="r" hint-placeholder-count="25">
+<div style="height: {{ex.rowH}}px; box-sizing: border-box; border-bottom: 1px solid #1F2125; background: {{r.laneBg}}"></div>
+</sc-for>
+</div>
+<div style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; pointer-events: none; background-image: linear-gradient(to right, #2C2F35 1px, transparent 1px); background-size: 60px 100%"></div>
+<sc-for list="{{ex.notes}}" as="n" hint-placeholder-count="4">
+<div style="position: absolute; left: {{n.left}}px; top: {{n.top}}px; width: {{n.width}}px; height: {{n.h}}px; box-sizing: border-box; border-radius: 3px; background: {{n.fill}}; border: {{n.ring}}"></div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-for>
+
+<div style="width: 400px; flex-shrink: 0; box-sizing: border-box; padding: 24px; background: #17181B; border: 1px solid #25272C; border-radius: 12px; display: flex; flex-direction: column; gap: 18px">
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A6AD">Key states</div>
+
+<div style="display: flex; align-items: center; gap: 16px">
+<div style="width: 72px; height: 24px; flex-shrink: 0; box-sizing: border-box; padding-right: 8px; display: flex; align-items: center; justify-content: flex-end; background: #D9D6CF; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; color: #3A3D44">E4</div>
+<div style="font-size: 14px; line-height: 20px; color: #C9CBD0"><span style="color: #E8E6E1; font-weight: 500">Default.</span> White key-white, black key-black and 26px shorter.</div>
+</div>
+
+<div style="display: flex; align-items: center; gap: 16px">
+<div style="width: 72px; height: 24px; flex-shrink: 0; box-sizing: border-box; padding-right: 8px; display: flex; align-items: center; justify-content: flex-end; background: #5FB3E8; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; font-weight: 600; color: #0B1A24">E4</div>
+<div style="font-size: 14px; line-height: 20px; color: #C9CBD0"><span style="color: #E8E6E1; font-weight: 500">Detected.</span> Solid blue key, grid row tinted. The live note, so the strongest signal.</div>
+</div>
+
+<div style="display: flex; align-items: center; gap: 16px">
+<div style="position: relative; width: 72px; height: 24px; flex-shrink: 0; box-sizing: border-box; padding-right: 8px; display: flex; align-items: center; justify-content: flex-end; background: #D9D6CF; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; color: #3A3D44">C4<div style="position: absolute; right: 0; top: 0; bottom: 0; width: 4px; background: #5FB3E8"></div></div>
+<div style="font-size: 14px; line-height: 20px; color: #C9CBD0"><span style="color: #E8E6E1; font-weight: 500">Selected note.</span> 4px blue bar on the edge next to the grid.</div>
+</div>
+
+<div style="display: flex; align-items: center; gap: 16px">
+<div style="position: relative; width: 72px; height: 24px; flex-shrink: 0; box-sizing: border-box; padding-right: 8px; display: flex; align-items: center; justify-content: flex-end; background: #5FB3E8; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; font-weight: 600; color: #0B1A24">E4<div style="position: absolute; right: 0; top: 0; bottom: 0; width: 4px; background: #0B1A24"></div></div>
+<div style="font-size: 14px; line-height: 20px; color: #C9CBD0"><span style="color: #E8E6E1; font-weight: 500">Detected + selected.</span> Blue key, dark edge bar.</div>
+</div>
+
+<div style="display: flex; align-items: center; gap: 16px">
+<div style="width: 72px; height: 24px; flex-shrink: 0; box-sizing: border-box; padding-right: 8px; display: flex; align-items: center; justify-content: flex-end; gap: 4px; background: #ECEAE4; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; color: #3A3D44"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"></path><path d="M16.5 8.5a5 5 0 0 1 0 7"></path></svg>B3</div>
+<div style="font-size: 14px; line-height: 20px; color: #C9CBD0"><span style="color: #E8E6E1; font-weight: 500">Hover.</span> Lighter key plus speaker icon: click to hear.</div>
+</div>
+
+<div style="display: flex; align-items: center; gap: 16px">
+<div style="width: 72px; height: 24px; flex-shrink: 0; box-sizing: border-box; padding-right: 8px; display: flex; align-items: center; justify-content: flex-end; background: {{accent}}; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; font-weight: 600; color: #1A1307">F#4</div>
+<div style="font-size: 14px; line-height: 20px; color: #C9CBD0"><span style="color: #E8E6E1; font-weight: 500">Playing.</span> Amber while the clicked note sounds.</div>
+</div>
+
+<div style="display: flex; align-items: center; gap: 16px">
+<div style="position: relative; width: 72px; height: 24px; flex-shrink: 0; box-sizing: border-box; padding-right: 8px; display: flex; align-items: center; justify-content: flex-end; background: #D9D6CF; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; color: #3A3D44"><div style="position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: #46A758"></div>G4</div>
+<div style="font-size: 14px; line-height: 20px; color: #C9CBD0"><span style="color: #E8E6E1; font-weight: 500">Pitch class.</span> 6px strip on the outer edge, only when the setting is on.</div>
+</div>
+
+<div style="height: 1px; background: #25272C"></div>
+<div style="font-size: 13px; line-height: 20px; color: #A3A6AD">Column 72px, rows 24px, labels 12px mono. Below 16px rows only Cs and the detected key keep their names. Pitch-class colours are [placeholders]: replace with the app's 12.</div>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F2A541","options":["#F2A541","#E8744F","#9D8CF2","#6FD08C"]},"$preview":{"width":1520,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var accent = this.props.accent ?? '#F2A541';
+    var PC = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+    var PAL = ['#E5484D','#F76B15','#FFC53D','#BDEE63','#46A758','#12A594','#00A2C7','#3E63DD','#6E56CF','#AB4ABA','#D6409F','#E54666'];
+    function nm(m) { return PC[m % 12] + (Math.floor(m / 12) - 1); }
+    function build(cfg) {
+      var rows = [];
+      for (var m = cfg.top; m >= cfg.bottom; m--) {
+        var name = nm(m);
+        var black = PC[m % 12].indexOf('#') > -1;
+        var det = name === cfg.detected;
+        var sel = cfg.selected.indexOf(name) > -1;
+        var hov = name === cfg.hover;
+        var play = name === cfg.playing;
+        var keyBg = black ? '#2A2C31' : '#D9D6CF';
+        var keyFg = black ? '#C9CBD0' : '#3A3D44';
+        var weight = 400;
+        if (hov) { keyBg = black ? '#3A3D44' : '#ECEAE4'; keyFg = black ? '#E8E6E1' : '#3A3D44'; }
+        if (play) { keyBg = accent; keyFg = '#1A1307'; weight = 600; }
+        if (det) { keyBg = '#5FB3E8'; keyFg = '#0B1A24'; weight = 600; }
+        var showLabel = cfg.allLabels || m % 12 === 0 || det;
+        rows.push({
+          label: showLabel ? name : '',
+          keyBg: keyBg,
+          keyFg: keyFg,
+          weight: weight,
+          inset: black && !det && !play ? 26 : 0,
+          strip: cfg.strips ? PAL[m % 12] : 'transparent',
+          bar: sel ? (det ? '#0B1A24' : '#5FB3E8') : 'transparent',
+          speaker: hov && cfg.allLabels,
+          laneBg: det ? 'rgba(95,179,232,0.16)' : (black ? '#141518' : '#1A1C20')
+        });
+      }
+      var notes = cfg.notes.map(function (n) {
+        var idx = cfg.top - n[0];
+        return {
+          left: n[1], width: n[2],
+          top: idx * cfg.rowH + 3, h: cfg.rowH - 6,
+          fill: n[3] ? '#5FB3E8' : accent,
+          ring: n[3] ? '1.5px solid #DCEFFB' : '0 solid transparent'
+        };
+      });
+      return { caption: cfg.caption, rows: rows, notes: notes, rowH: cfg.rowH, fontSize: cfg.fontSize, laneW: cfg.laneW };
+    }
+    var exhibits = [
+      build({ caption: 'Pitch-class colours off', top: 72, bottom: 48, rowH: 24, fontSize: 12, laneW: 240, allLabels: true, strips: false,
+        detected: 'E4', selected: ['C4', 'G4'], hover: 'B3', playing: 'F#4',
+        notes: [[60, 4, 110, true], [67, 4, 110, true], [57, 124, 110, false], [62, 124, 56, false], [65, 184, 52, false], [71, 60, 110, false]] }),
+      build({ caption: 'Pitch-class colours on', top: 72, bottom: 48, rowH: 24, fontSize: 12, laneW: 240, allLabels: true, strips: true,
+        detected: 'E4', selected: ['E4', 'A4'], hover: 'D#4', playing: 'A3',
+        notes: [[64, 4, 110, true], [69, 4, 110, true], [60, 124, 110, false], [55, 64, 110, false], [74, 124, 110, false]] }),
+      build({ caption: 'Compact rows (14px)', top: 84, bottom: 36, rowH: 14, fontSize: 10, laneW: 120, allLabels: false, strips: false,
+        detected: 'E4', selected: [], hover: '', playing: '',
+        notes: [[60, 4, 56, false], [64, 4, 56, false], [67, 64, 52, false], [48, 30, 60, false]] })
+    ];
+    return { accent: accent, exhibits: exhibits };
+  }
+}
+</script>
+</body>
+</html>

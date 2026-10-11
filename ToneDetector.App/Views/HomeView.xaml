@@ -1,0 +1,366 @@
+<UserControl x:Class="ToneDetector.App.Views.HomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:ToneDetector.App.Controls"
+             xmlns:converters="clr-namespace:ToneDetector.App.Converters"
+             xmlns:vm="clr-namespace:ToneDetector.App.ViewModels"
+             xmlns:System="clr-namespace:System;assembly=System.Runtime"
+             Background="{StaticResource Bg}"
+             Foreground="{StaticResource Ink}"
+             FontFamily="{StaticResource Sans}"
+             FontSize="{StaticResource BodyFontSize}">
+
+    <!-- Home screen, from Design/Main.dc.html. DataContext is the MainViewModel. The navigation
+         header above it belongs to MainWindow (shared by every tab).
+         Flexible layout: exact mockup sizes when the page area is 1920 x 1008 (1080 minus the
+         72px header). Below that, Projects narrows to 400, the pitch and piano roll panels share the
+         height (piano roll keeps 300) and the note readout shrinks. Scrolls only below 1248 x 844. -->
+
+    <UserControl.Resources>
+        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisibility"/>
+
+        <Style x:Key="Panel" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource Surface}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderSubtle}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="{StaticResource RadiusLg}"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+        </Style>
+
+        <Style x:Key="Tile" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource Bg}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderSubtle}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="{StaticResource RadiusTile}"/>
+            <Setter Property="Padding" Value="20,18"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+        </Style>
+
+        <Style x:Key="FieldLabel" TargetType="TextBlock" BasedOn="{StaticResource Label}">
+            <Setter Property="Foreground" Value="{StaticResource InkSubtle}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Offset readout: PitchText in tune, Ink otherwise -->
+        <Style x:Key="OffsetValue" TargetType="Run">
+            <Setter Property="Foreground" Value="{StaticResource Ink}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LiveTuner.TuningState}" Value="{x:Static vm:TuningState.InTune}">
+                    <Setter Property="Foreground" Value="{StaticResource PitchText}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer x:Name="Scroller" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Focusable="False">
+        <!-- Sized to the viewport so the star rows and columns flex; the minimums below are where scrolling starts. -->
+        <Grid Width="{Binding ViewportWidth, ElementName=Scroller}"
+              Height="{Binding ViewportHeight, ElementName=Scroller}"
+              MinWidth="1248" MinHeight="844">
+
+            <!-- ================= Main ================= -->
+            <Grid Margin="32">
+                <Grid.ColumnDefinitions>
+                    <!-- 520 : 1312 is the mockup split at 1920 wide -->
+                    <ColumnDefinition Width="520*" MinWidth="400" MaxWidth="520"/>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="1312*" MinWidth="760"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- ================= Projects (inactive until projects exist) ================= -->
+                <Border Grid.Column="0" Style="{StaticResource Panel}" Padding="28">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource Overline}" Text="PROJECTS"/>
+
+                        <Grid DockPanel.Dock="Top" Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Style="{StaticResource ButtonPrimary}" IsEnabled="False"
+                                    ToolTip="{x:Static vm:HomeViewModel.ProjectsUnavailableText}" ToolTipService.ShowOnDisabled="True">
+                                <StackPanel Orientation="Horizontal">
+                                    <ContentControl Style="{StaticResource Icon}" Content="{StaticResource IconPlus}" Width="18" Height="18">
+                                        <ContentControl.Tag><System:Double>2.2</System:Double></ContentControl.Tag>
+                                    </ContentControl>
+                                    <TextBlock Text="New project" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Grid.Column="2" Style="{StaticResource ButtonSecondary}" IsEnabled="False"
+                                    ToolTip="{x:Static vm:HomeViewModel.ProjectsUnavailableText}" ToolTipService.ShowOnDisabled="True">
+                                <StackPanel Orientation="Horizontal">
+                                    <ContentControl Style="{StaticResource Icon}" Content="{StaticResource IconFolder}" Width="18" Height="18"/>
+                                    <TextBlock Text="Open project" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource FieldLabel}" Text="Search projects" Margin="0,20,0,8"/>
+                        <TextBox DockPanel.Dock="Top" Style="{StaticResource TextInput}" FontFamily="{StaticResource Sans}"
+                                 controls:Placeholder.Text="Type a project name"
+                                 AutomationProperties.Name="Search projects"
+                                 Text="{Binding Home.ProjectSearchText, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource Overline}" Text="RECENT" Margin="0,24,0,0"/>
+
+                        <Grid Margin="0,20,0,0">
+                            <!-- Item template comes with the project model -->
+                            <ItemsControl ItemsSource="{Binding Home.RecentProjects}"/>
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="No recent projects" VerticalAlignment="Top"
+                                       Visibility="{Binding Home.HasRecentProjects, Converter={StaticResource InverseBoolToVisibility}}"/>
+                        </Grid>
+                    </DockPanel>
+                </Border>
+
+                <!-- ================= Right column ================= -->
+                <Grid Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <!-- 560 : 360 is the mockup split at 1080 tall -->
+                        <RowDefinition Height="560*" MinHeight="456" MaxHeight="560"/>
+                        <RowDefinition Height="24"/>
+                        <RowDefinition Height="360*" MinHeight="300"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- ================= Live pitch detection ================= -->
+                    <Border Grid.Row="0" Style="{StaticResource Panel}" Padding="32,28">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="20"/>
+                                <!-- Note row: 196 in the mockup; gives way (to 140) before the history does -->
+                                <RowDefinition Height="196*" MinHeight="140" MaxHeight="196"/>
+                                <RowDefinition Height="20"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="20"/>
+                                <!-- History: label 20 + gap 8 + chart at least 48 -->
+                                <RowDefinition Height="*" MinHeight="76"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Header row -->
+                            <Grid Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0" Style="{StaticResource Overline}" Text="LIVE PITCH DETECTION"
+                                           VerticalAlignment="Center"/>
+
+                                <DockPanel Grid.Column="1" HorizontalAlignment="Right" Margin="16,0,0,0">
+                                    <Grid DockPanel.Dock="Right" Margin="12,0,0,0">
+                                        <Button Style="{StaticResource ButtonPrimary}" Height="44" Padding="18,0"
+                                                Command="{Binding LiveTuner.StartListeningCommand}"
+                                                Visibility="{Binding LiveTuner.IsPipelineRunning, Converter={StaticResource InverseBoolToVisibility}}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <ContentControl Style="{StaticResource Icon}" Content="{StaticResource IconMicrophone}" Width="18" Height="18"/>
+                                                <TextBlock Text="Start listening" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Style="{StaticResource ButtonSecondary}" Height="44" Padding="18,0"
+                                                Command="{Binding LiveTuner.StopListeningCommand}"
+                                                Visibility="{Binding LiveTuner.IsPipelineRunning, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <ContentControl Style="{StaticResource IconFilled}" Content="{StaticResource IconStop}" Width="14" Height="14"/>
+                                                <TextBlock Text="Stop listening" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </Grid>
+                                    <TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLabel}" Text="Input" Margin="0,0,12,0"/>
+                                    <ComboBox Style="{StaticResource Select}" FontFamily="{StaticResource Sans}"
+                                              MinWidth="140" MaxWidth="260"
+                                              AutomationProperties.Name="Input device"
+                                              ItemsSource="{Binding LiveTuner.CaptureDevices}"
+                                              DisplayMemberPath="FriendlyName"
+                                              SelectedItem="{Binding LiveTuner.SelectedDevice}"/>
+                                </DockPanel>
+                            </Grid>
+
+                            <!-- Note and readout tiles -->
+                            <Grid Grid.Row="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="56"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Viewbox Grid.Column="0" StretchDirection="DownOnly" VerticalAlignment="Center"
+                                         Visibility="{Binding LiveTuner.HasPitch, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <TextBlock Style="{StaticResource ReadoutHero}" Foreground="{StaticResource InkStrong}"
+                                               AutomationProperties.Name="Detected note">
+                                        <Run Text="{Binding LiveTuner.NoteLetter, Mode=OneWay}"/><Run Text=" " FontSize="8"/><Run
+                                             Text="{Binding LiveTuner.NoteOctave, Mode=OneWay}" FontSize="72" FontWeight="Normal"
+                                             Foreground="{StaticResource InkSubtle}"/>
+                                    </TextBlock>
+                                </Viewbox>
+                                <!-- No pitch: "No pitch" while listening, "Not listening" while stopped -->
+                                <TextBlock Grid.Column="0" Style="{StaticResource Readout}" Foreground="{StaticResource InkSubtle}"
+                                           VerticalAlignment="Center"
+                                           Text="{Binding LiveTuner.NoPitchText, Mode=OneWay}"
+                                           Visibility="{Binding LiveTuner.HasPitch, Converter={StaticResource InverseBoolToVisibility}}"/>
+
+                                <Grid Grid.Column="2" VerticalAlignment="Center">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="16"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="16"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Grid.Column="0" Style="{StaticResource Tile}">
+                                        <StackPanel>
+                                            <TextBlock Style="{StaticResource FieldLabel}" Text="Detected"/>
+                                            <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" Margin="0,8,0,0">
+                                                <TextBlock Style="{StaticResource Readout}"><Run
+                                                    Text="{Binding LiveTuner.DetectedFrequencyText, Mode=OneWay}"/><Run
+                                                    Text=" Hz" FontSize="{StaticResource ValueFontSize}" FontWeight="Normal"
+                                                    Foreground="{StaticResource InkSubtle}"/></TextBlock>
+                                            </Viewbox>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border Grid.Column="2" Style="{StaticResource Tile}">
+                                        <StackPanel>
+                                            <TextBlock Style="{StaticResource FieldLabel}" Text="Target"/>
+                                            <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" Margin="0,8,0,0">
+                                                <TextBlock Style="{StaticResource Readout}"><Run
+                                                    Text="{Binding LiveTuner.TargetFrequencyText, Mode=OneWay}"/><Run
+                                                    Text=" Hz" FontSize="{StaticResource ValueFontSize}" FontWeight="Normal"
+                                                    Foreground="{StaticResource InkSubtle}"/></TextBlock>
+                                            </Viewbox>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border Grid.Column="4" Style="{StaticResource Tile}">
+                                        <StackPanel>
+                                            <TextBlock Style="{StaticResource FieldLabel}" Text="Offset"/>
+                                            <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" Margin="0,8,0,0">
+                                                <TextBlock Style="{StaticResource Readout}"><Run
+                                                    Style="{StaticResource OffsetValue}"
+                                                    Text="{Binding LiveTuner.OffsetText, Mode=OneWay}"/><Run
+                                                    Text=" " FontSize="{StaticResource ValueFontSize}"/><Run
+                                                    Text="{Binding LiveTuner.OffsetLabel, Mode=OneWay}" FontSize="{StaticResource ValueFontSize}"
+                                                    FontWeight="Normal" Foreground="{StaticResource InkSubtle}"/></TextBlock>
+                                            </Viewbox>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </Grid>
+
+                            <!-- Tuning meter -->
+                            <controls:TuningMeter Grid.Row="4"
+                                                  Cents="{Binding LiveTuner.DisplayCents, Mode=OneWay}"
+                                                  InTuneCents="{x:Static vm:LiveTunerViewModel.InTuneToleranceCents}"
+                                                  TextElement.FontFamily="{StaticResource Mono}"
+                                                  AutomationProperties.Name="Tuning meter"/>
+
+                            <!-- Pitch history -->
+                            <DockPanel Grid.Row="6">
+                                <TextBlock DockPanel.Dock="Top" Style="{StaticResource FieldLabel}" Text="Pitch history" Margin="0,0,0,8"/>
+                                <controls:PitchHistoryChart History="{Binding LiveTuner.PitchHistory, Mode=OneWay}" MinHeight="48"
+                                                            AutomationProperties.Name="Pitch history"/>
+                            </DockPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- ================= Piano roll ================= -->
+                    <Border Grid.Row="2" Style="{StaticResource Panel}" Padding="32,28">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="380"/>
+                                <ColumnDefinition Width="32"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel Grid.Column="0">
+                                <TextBlock DockPanel.Dock="Top" Style="{StaticResource Overline}" Text="PIANO ROLL"/>
+                                <TextBlock DockPanel.Dock="Top" Style="{StaticResource Display}" Margin="0,14,0,0"
+                                           TextWrapping="Wrap" Text="Jump straight into the editor"/>
+                                <TextBlock DockPanel.Dock="Top" Style="{StaticResource Body}" Foreground="{StaticResource InkMuted}"
+                                           Margin="0,14,0,0" TextWrapping="Wrap"
+                                           Text="Open the polyphonic piano roll with your current notes."/>
+                                <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,14,0,0">
+                                    <Button Style="{StaticResource ButtonPrimary}" Click="OpenPianoRollButton_Click">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Open piano roll" VerticalAlignment="Center"/>
+                                            <ContentControl Style="{StaticResource Icon}" Content="{StaticResource IconArrowRight}"
+                                                            Width="18" Height="18" Margin="10,0,0,0">
+                                                <ContentControl.Tag><System:Double>2.2</System:Double></ContentControl.Tag>
+                                            </ContentControl>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Style="{StaticResource ButtonSecondary}" Content="Continue last" Margin="12,0,0,0" IsEnabled="False"
+                                            ToolTip="{x:Static vm:HomeViewModel.ProjectsUnavailableText}" ToolTipService.ShowOnDisabled="True"/>
+                                </StackPanel>
+                                <Border/>
+                            </DockPanel>
+
+                            <!-- Static preview (drawn from the mockup; a live preview is deferred, see PLAN.md) -->
+                            <Border x:Name="PreviewWell" Grid.Column="2" Background="{StaticResource BgChrome}"
+                                    BorderBrush="{StaticResource BorderSubtle}" BorderThickness="1"
+                                    CornerRadius="{StaticResource RadiusTile}" SizeChanged="PreviewWell_SizeChanged"
+                                    AutomationProperties.Name="Piano roll preview">
+                                <Viewbox Stretch="UniformToFill">
+                                    <Canvas Width="836" Height="296">
+                                    <Rectangle Canvas.Left="64" Canvas.Top="4" Width="772" Height="24" Fill="{StaticResource LaneWhite}"/>
+                                    <Rectangle Canvas.Left="64" Canvas.Top="28" Width="772" Height="24" Fill="{StaticResource LaneBlack}"/>
+                                    <Rectangle Canvas.Left="64" Canvas.Top="52" Width="772" Height="24" Fill="{StaticResource LaneWhite}"/>
+                                    <Rectangle Canvas.Left="64" Canvas.Top="76" Width="772" Height="24" Fill="{StaticResource LaneBlack}"/>
+                                    <Rectangle Canvas.Left="64" Canvas.Top="100" Width="772" Height="24" Fill="{StaticResource LaneWhite}"/>
+                                    <Rectangle Canvas.Left="64" Canvas.Top="124" Width="772" Height="24" Fill="{StaticResource LaneBlack}"/>
+                                    <Rectangle Canvas.Left="64" Canvas.Top="148" Width="772" Height="24" Fill="{StaticResource LaneWhite}"/>
+                                    <Rectangle Canvas.Left="64" Canvas.Top="172" Width="772" Height="24" Fill="{StaticResource LaneWhite}"/>
+                                    <Rectangle Canvas.Left="64" Canvas.Top="196" Width="772" Height="24" Fill="{StaticResource LaneBlack}"/>
+                                    <Rectangle Canvas.Left="64" Canvas.Top="220" Width="772" Height="24" Fill="{StaticResource LaneWhite}"/>
+                                    <Rectangle Canvas.Left="64" Canvas.Top="244" Width="772" Height="24" Fill="{StaticResource LaneBlack}"/>
+                                    <Rectangle Canvas.Left="64" Canvas.Top="268" Width="772" Height="24" Fill="{StaticResource LaneWhite}"/>
+                                    <Line X1="112" Y1="4" X2="112" Y2="292" Stroke="{StaticResource BorderSubtle}" StrokeThickness="1"/>
+                                    <Line X1="160" Y1="4" X2="160" Y2="292" Stroke="{StaticResource BorderSubtle}" StrokeThickness="1"/>
+                                    <Line X1="208" Y1="4" X2="208" Y2="292" Stroke="{StaticResource BorderSubtle}" StrokeThickness="1"/>
+                                    <Line X1="256" Y1="4" X2="256" Y2="292" Stroke="{StaticResource Border}" StrokeThickness="1"/>
+                                    <Line X1="304" Y1="4" X2="304" Y2="292" Stroke="{StaticResource BorderSubtle}" StrokeThickness="1"/>
+                                    <Line X1="352" Y1="4" X2="352" Y2="292" Stroke="{StaticResource BorderSubtle}" StrokeThickness="1"/>
+                                    <Line X1="400" Y1="4" X2="400" Y2="292" Stroke="{StaticResource BorderSubtle}" StrokeThickness="1"/>
+                                    <Line X1="448" Y1="4" X2="448" Y2="292" Stroke="{StaticResource Border}" StrokeThickness="1"/>
+                                    <Line X1="496" Y1="4" X2="496" Y2="292" Stroke="{StaticResource BorderSubtle}" StrokeThickness="1"/>
+                                    <Line X1="544" Y1="4" X2="544" Y2="292" Stroke="{StaticResource BorderSubtle}" StrokeThickness="1"/>
+                                    <Line X1="592" Y1="4" X2="592" Y2="292" Stroke="{StaticResource BorderSubtle}" StrokeThickness="1"/>
+                                    <Line X1="640" Y1="4" X2="640" Y2="292" Stroke="{StaticResource Border}" StrokeThickness="1"/>
+                                    <Line X1="688" Y1="4" X2="688" Y2="292" Stroke="{StaticResource BorderSubtle}" StrokeThickness="1"/>
+                                    <Line X1="736" Y1="4" X2="736" Y2="292" Stroke="{StaticResource BorderSubtle}" StrokeThickness="1"/>
+                                    <Line X1="784" Y1="4" X2="784" Y2="292" Stroke="{StaticResource BorderSubtle}" StrokeThickness="1"/>
+                                    <Rectangle Canvas.Left="0" Canvas.Top="4" Width="64" Height="24" Fill="{StaticResource KeyWhite}" Stroke="{StaticResource Bg}" StrokeThickness="1"/>
+                                    <Rectangle Canvas.Left="0" Canvas.Top="28" Width="64" Height="24" Fill="{StaticResource KeyBlack}" Stroke="{StaticResource Bg}" StrokeThickness="1"/>
+                                    <Rectangle Canvas.Left="0" Canvas.Top="52" Width="64" Height="24" Fill="{StaticResource KeyWhite}" Stroke="{StaticResource Bg}" StrokeThickness="1"/>
+                                    <Rectangle Canvas.Left="0" Canvas.Top="76" Width="64" Height="24" Fill="{StaticResource KeyBlack}" Stroke="{StaticResource Bg}" StrokeThickness="1"/>
+                                    <Rectangle Canvas.Left="0" Canvas.Top="100" Width="64" Height="24" Fill="{StaticResource KeyWhite}" Stroke="{StaticResource Bg}" StrokeThickness="1"/>
+                                    <Rectangle Canvas.Left="0" Canvas.Top="124" Width="64" Height="24" Fill="{StaticResource KeyBlack}" Stroke="{StaticResource Bg}" StrokeThickness="1"/>
+                                    <Rectangle Canvas.Left="0" Canvas.Top="148" Width="64" Height="24" Fill="{StaticResource KeyWhite}" Stroke="{StaticResource Bg}" StrokeThickness="1"/>
+                                    <Rectangle Canvas.Left="0" Canvas.Top="172" Width="64" Height="24" Fill="{StaticResource KeyWhite}" Stroke="{StaticResource Bg}" StrokeThickness="1"/>
+                                    <Rectangle Canvas.Left="0" Canvas.Top="196" Width="64" Height="24" Fill="{StaticResource KeyBlack}" Stroke="{StaticResource Bg}" StrokeThickness="1"/>
+                                    <Rectangle Canvas.Left="0" Canvas.Top="220" Width="64" Height="24" Fill="{StaticResource KeyWhite}" Stroke="{StaticResource Bg}" StrokeThickness="1"/>
+                                    <Rectangle Canvas.Left="0" Canvas.Top="244" Width="64" Height="24" Fill="{StaticResource KeyBlack}" Stroke="{StaticResource Bg}" StrokeThickness="1"/>
+                                    <Rectangle Canvas.Left="0" Canvas.Top="268" Width="64" Height="24" Fill="{StaticResource KeyWhite}" Stroke="{StaticResource Bg}" StrokeThickness="1"/>
+                                    <TextBlock Canvas.Left="8" Canvas.Top="273" Text="C4" FontFamily="{StaticResource Mono}" FontSize="12" Foreground="{StaticResource KeyLabel}"/>
+                                    <Rectangle Canvas.Left="66" Canvas.Top="272" Width="172" Height="16" RadiusX="3" RadiusY="3" Fill="{StaticResource Accent}"/>
+                                    <Rectangle Canvas.Left="66" Canvas.Top="176" Width="172" Height="16" RadiusX="3" RadiusY="3" Fill="{StaticResource Accent}"/>
+                                    <Rectangle Canvas.Left="66" Canvas.Top="104" Width="172" Height="16" RadiusX="3" RadiusY="3" Fill="{StaticResource Accent}"/>
+                                    <Rectangle Canvas.Left="258" Canvas.Top="224" Width="172" Height="16" RadiusX="3" RadiusY="3" Fill="{StaticResource Accent}"/>
+                                    <Rectangle Canvas.Left="258" Canvas.Top="152" Width="172" Height="16" RadiusX="3" RadiusY="3" Fill="{StaticResource Accent}"/>
+                                    <Rectangle Canvas.Left="258" Canvas.Top="56" Width="172" Height="16" RadiusX="3" RadiusY="3" Fill="{StaticResource Accent}"/>
+                                    <Rectangle Canvas.Left="450" Canvas.Top="176" Width="124" Height="16" RadiusX="3" RadiusY="3" Fill="{StaticResource Accent}"/>
+                                    <Rectangle Canvas.Left="450" Canvas.Top="104" Width="124" Height="16" RadiusX="3" RadiusY="3" Fill="{StaticResource Accent}"/>
+                                    <Rectangle Canvas.Left="450" Canvas.Top="8" Width="124" Height="16" RadiusX="3" RadiusY="3" Fill="{StaticResource Accent}"/>
+                                    <Rectangle Canvas.Left="642" Canvas.Top="56" Width="172" Height="16" RadiusX="3" RadiusY="3" Fill="{StaticResource Pitch}" Stroke="{StaticResource SelectionRing}" StrokeThickness="1.5"/>
+                                    <Rectangle Canvas.Left="642" Canvas.Top="152" Width="172" Height="16" RadiusX="3" RadiusY="3" Fill="{StaticResource Pitch}" Stroke="{StaticResource SelectionRing}" StrokeThickness="1.5"/>
+                                    </Canvas>
+                                </Viewbox>
+                            </Border>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

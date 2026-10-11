@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Music Station - Settings</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#0F1012;font-family:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;color:#E8E6E1}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="width: 1920px; height: 1080px; box-sizing: border-box; background: #0F1012; display: flex; flex-direction: column; font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; color: #E8E6E1">
+
+<header style="height: 72px; flex-shrink: 0; box-sizing: border-box; padding: 0 32px; display: flex; align-items: center; border-bottom: 1px solid #25272C; background: #131417">
+<div style="display: flex; align-items: center; gap: 14px; flex-shrink: 0">
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="{{accent}}" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="12" x2="5" y2="20"></line><line x1="11" y1="7" x2="11" y2="25"></line><line x1="17" y1="3" x2="17" y2="29"></line><line x1="23" y1="9" x2="23" y2="23"></line><line x1="29" y1="13" x2="29" y2="19"></line></svg>
+<div style="font-size: 22px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap">Music Station</div>
+</div>
+<nav role="tablist" aria-label="Main" style="height: 72px; margin-left: 40px; display: flex; align-items: stretch; gap: 4px">
+<div style="display: flex; align-items: center"><button role="tab" aria-selected="false" style="height: 40px; padding: 0 16px; border: none; border-radius: 8px; background: transparent; color: #C9CBD0; font-size: 15px; font-weight: 500; cursor: pointer; white-space: nowrap">Home</button></div>
+<div style="display: flex; align-items: center"><button role="tab" aria-selected="false" style="height: 40px; padding: 0 16px; border: none; border-radius: 8px; background: transparent; color: #C9CBD0; font-size: 15px; font-weight: 500; cursor: pointer; white-space: nowrap">Live Tuner</button></div>
+<div style="display: flex; align-items: center"><button role="tab" aria-selected="false" style="height: 40px; padding: 0 16px; border: none; border-radius: 8px; background: transparent; color: #C9CBD0; font-size: 15px; font-weight: 500; cursor: pointer; white-space: nowrap">File Analysis</button></div>
+<div style="position: relative; display: flex; align-items: center">
+<button role="tab" aria-selected="true" style="height: 40px; padding: 0 16px; border: none; border-radius: 8px; background: transparent; color: #F4F2EE; font-size: 15px; font-weight: 600; cursor: pointer; white-space: nowrap">Settings</button>
+<div style="position: absolute; left: 16px; right: 16px; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: {{accent}}"></div>
+</div>
+</nav>
+<div style="flex-grow: 1"></div>
+<div style="display: flex; align-items: center; gap: 10px; margin-right: 20px; min-width: 0; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 14px; color: #C9CBD0">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A6AD" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0"></path><line x1="12" y1="18" x2="12" y2="21"></line></svg>
+<div style="max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">[Input device]</div>
+<div style="color: #6B6F77">·</div>
+<div style="white-space: nowrap">[Sample rate]</div>
+</div>
+<div role="status" style="width: 260px; height: 40px; box-sizing: border-box; flex-shrink: 0; padding: 0 16px; display: flex; align-items: center; gap: 10px; border-radius: 999px; background: #1F2125">
+<div style="width: 8px; height: 8px; flex-shrink: 0; border-radius: 50%; background: #A3A6AD"></div>
+<div style="font-size: 14px; color: #A3A6AD; white-space: nowrap">Not listening</div>
+</div>
+</header>
+
+<main style="flex-grow: 1; min-height: 0; box-sizing: border-box; padding: 32px; display: flex; gap: 24px">
+
+<nav aria-label="Settings sections" style="width: 280px; flex-shrink: 0; box-sizing: border-box; padding: 20px 12px; background: #17181B; border: 1px solid #25272C; border-radius: 12px; display: flex; flex-direction: column; gap: 4px">
+<div style="padding: 0 12px 10px; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A6AD">Settings</div>
+<sc-for list="{{sections}}" as="s" hint-placeholder-count="9">
+<button aria-current="{{s.current}}" style="height: 44px; padding: 0 12px; display: flex; align-items: center; gap: 12px; background: {{s.bg}}; color: {{s.fg}}; border: none; border-radius: 8px; font-size: 15px; font-weight: {{s.weight}}; text-align: left; cursor: pointer">
+<div style="width: 6px; height: 6px; flex-shrink: 0; border-radius: 50%; background: {{s.dot}}"></div>{{s.label}}</button>
+</sc-for>
+</nav>
+
+<section aria-label="Synth settings" style="flex-grow: 1; min-width: 0; box-sizing: border-box; padding: 32px 40px; background: #17181B; border: 1px solid #25272C; border-radius: 12px; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-size: 30px; line-height: 36px; font-weight: 600; letter-spacing: -0.01em">Synth</h1>
+<p style="margin: 0; font-size: 16px; line-height: 24px; color: #C9CBD0">How notes are played back: the engine, the plugin and the output level.</p>
+</div>
+
+<div style="max-width: 960px; display: flex; flex-direction: column">
+<div style="padding-bottom: 8px; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A6AD">Engine</div>
+
+<div style="min-height: 64px; display: grid; grid-template-columns: 260px 1fr 32px; align-items: center; column-gap: 24px; border-bottom: 1px solid #25272C">
+<label for="synth-engine" style="font-size: 15px; font-weight: 500">Synth engine</label>
+<select id="synth-engine" style="width: 300px; height: 44px; box-sizing: border-box; padding: 0 12px; background: #0F1012; border: 1px solid #34373D; border-radius: 8px; color: #E8E6E1; font-family: inherit; font-size: 15px"><option>VST3 Plugin</option></select>
+<button aria-label="About Synth engine" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid #34373D; border-radius: 50%; color: #A3A6AD; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; cursor: pointer">i</button>
+</div>
+
+<div style="min-height: 64px; display: grid; grid-template-columns: 260px 1fr 32px; align-items: center; column-gap: 24px; border-bottom: 1px solid #25272C">
+<label for="vst-plugin" style="padding-left: 20px; font-size: 15px; color: #C9CBD0">VST3 plugin</label>
+<div style="display: flex; align-items: center; gap: 10px">
+<select id="vst-plugin" style="width: 300px; height: 44px; box-sizing: border-box; padding: 0 12px; background: #0F1012; border: 1px solid #34373D; border-radius: 8px; color: #E8E6E1; font-family: inherit; font-size: 15px"><option>Surge XT</option></select>
+<button style="height: 44px; padding: 0 16px; display: flex; align-items: center; gap: 8px; background: #1F2125; color: #E8E6E1; border: 1px solid #34373D; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"></path><polyline points="20 4 20 11 13 11"></polyline></svg>Rescan</button>
+<button style="height: 44px; padding: 0 14px; background: transparent; color: #F0625F; border: 1px solid transparent; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer">Remove selected plugin</button>
+</div>
+<button aria-label="About VST3 plugin" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid #34373D; border-radius: 50%; color: #A3A6AD; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; cursor: pointer">i</button>
+</div>
+
+<div style="min-height: 64px; display: grid; grid-template-columns: 260px 1fr 32px; align-items: center; column-gap: 24px; border-bottom: 1px solid #25272C">
+<label for="scan-folder" style="padding-left: 20px; font-size: 15px; color: #C9CBD0">Additional scan folder</label>
+<input id="scan-folder" type="text" value="[Scan folder path]" style="width: 520px; height: 44px; box-sizing: border-box; padding: 0 12px; background: #0F1012; border: 1px solid #34373D; border-radius: 8px; color: #E8E6E1; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 14px">
+<button aria-label="About Additional scan folder" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid #34373D; border-radius: 50%; color: #A3A6AD; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; cursor: pointer">i</button>
+</div>
+
+<div style="min-height: 64px; display: grid; grid-template-columns: 260px 1fr 32px; align-items: center; column-gap: 24px; border-bottom: 1px solid #25272C">
+<div style="padding-left: 20px; font-size: 15px; color: #C9CBD0">Plugin editor</div>
+<div><button style="height: 44px; padding: 0 16px; display: flex; align-items: center; gap: 8px; background: #1F2125; color: #E8E6E1; border: 1px solid #34373D; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 9h18"></path></svg>Show plugin editor…</button></div>
+<button aria-label="About Plugin editor" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid #34373D; border-radius: 50%; color: #A3A6AD; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; cursor: pointer">i</button>
+</div>
+
+<div style="padding: 32px 0 8px; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A6AD">Output</div>
+
+<div style="min-height: 64px; display: grid; grid-template-columns: 260px 1fr 32px; align-items: center; column-gap: 24px; border-bottom: 1px solid #25272C">
+<label for="voice-count" style="font-size: 15px; font-weight: 500">Synth voice count</label>
+<input id="voice-count" type="text" value="16" style="width: 96px; height: 44px; box-sizing: border-box; padding: 0 12px; background: #0F1012; border: 1px solid #34373D; border-radius: 8px; color: #E8E6E1; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 16px; text-align: right">
+<button aria-label="About Synth voice count" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid #34373D; border-radius: 50%; color: #A3A6AD; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; cursor: pointer">i</button>
+</div>
+
+<div style="min-height: 64px; display: grid; grid-template-columns: 260px 1fr 32px; align-items: center; column-gap: 24px; border-bottom: 1px solid #25272C">
+<label for="master-volume" style="font-size: 15px; font-weight: 500">Master volume</label>
+<input id="master-volume" type="range" min="0" max="100" value="96" style="width: 300px; margin: 0; accent-color: #C9CBD0">
+<button aria-label="About Master volume" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid #34373D; border-radius: 50%; color: #A3A6AD; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; cursor: pointer">i</button>
+</div>
+</div>
+
+<div style="flex-grow: 1"></div>
+<div style="font-size: 13px; color: #A3A6AD">Changes apply straight away.</div>
+</section>
+
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F2A541","options":["#F2A541","#E8744F","#9D8CF2","#6FD08C"]},"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var accent = this.props.accent ?? '#F2A541';
+    var labels = ['Audio input', 'Filters', 'Pitch tracking', 'Voicing', 'Piano roll', 'Notation', 'MIDI & keyboard', 'Synth', 'Diagnostics'];
+    var active = 'Synth';
+    var sections = labels.map(function (l) {
+      var on = l === active;
+      return {
+        label: l,
+        current: on ? 'page' : 'false',
+        bg: on ? '#1F2125' : 'transparent',
+        fg: on ? '#F4F2EE' : '#C9CBD0',
+        weight: on ? 600 : 500,
+        dot: on ? accent : 'transparent'
+      };
+    });
+    return { accent: accent, sections: sections };
+  }
+}
+</script>
+</body>
+</html>

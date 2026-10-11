@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Music Station - Navigation header</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#0F1012;font-family:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;color:#E8E6E1}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="width: 1920px; height: 580px; box-sizing: border-box; padding: 40px 0; background: #0F1012; display: flex; flex-direction: column; gap: 36px; font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; color: #E8E6E1">
+
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="padding: 0 32px; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; line-height: 18px; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A6AD">{{r.caption}}</div>
+<header style="height: 72px; box-sizing: border-box; padding: 0 32px; display: flex; align-items: center; border-top: 1px solid #25272C; border-bottom: 1px solid #25272C; background: #131417">
+<div style="display: flex; align-items: center; gap: 14px; flex-shrink: 0">
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="{{accent}}" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="12" x2="5" y2="20"></line><line x1="11" y1="7" x2="11" y2="25"></line><line x1="17" y1="3" x2="17" y2="29"></line><line x1="23" y1="9" x2="23" y2="23"></line><line x1="29" y1="13" x2="29" y2="19"></line></svg>
+<div style="font-size: 22px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap">Music Station</div>
+</div>
+<nav role="tablist" aria-label="Main" style="height: 72px; margin-left: 40px; display: flex; align-items: stretch; gap: 4px">
+<sc-for list="{{r.tabs}}" as="t" hint-placeholder-count="4">
+<div style="position: relative; display: flex; align-items: center">
+<button role="tab" aria-selected="{{t.selected}}" style="height: 40px; padding: 0 16px; border: none; border-radius: 8px; background: {{t.bg}}; color: {{t.fg}}; font-size: 15px; font-weight: {{t.weight}}; outline: {{t.outline}}; outline-offset: 2px; cursor: pointer; white-space: nowrap">{{t.label}}</button>
+<div style="position: absolute; left: 16px; right: 16px; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: {{accent}}; opacity: {{t.bar}}"></div>
+</div>
+</sc-for>
+</nav>
+<div style="flex-grow: 1"></div>
+<div style="display: flex; align-items: center; gap: 10px; margin-right: 20px; min-width: 0; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 14px; color: #C9CBD0">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A6AD" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0"></path><line x1="12" y1="18" x2="12" y2="21"></line></svg>
+<div style="max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.device}}</div>
+<div style="color: #6B6F77">·</div>
+<div style="white-space: nowrap">[Sample rate]</div>
+</div>
+<div role="status" style="width: 260px; height: 40px; box-sizing: border-box; flex-shrink: 0; padding: 0 16px; display: flex; align-items: center; gap: 10px; border-radius: 999px; background: {{r.pillBg}}">
+<div style="width: 8px; height: 8px; flex-shrink: 0; border-radius: 50%; background: {{r.dot}}"></div>
+<div style="font-size: 14px; color: {{r.labelFg}}; white-space: nowrap">{{r.label}}</div>
+<sc-if value="{{r.hasNote}}" hint-placeholder-val="{{ true }}">
+<div style="width: 1px; height: 18px; background: #24475C"></div>
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 18px; font-weight: 500; color: #F4F2EE">{{r.note}}</div>
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; color: #8CCBF0; white-space: nowrap">{{r.sub}}</div>
+</sc-if>
+<sc-if value="{{r.noPitch}}" hint-placeholder-val="{{ false }}">
+<div style="width: 1px; height: 18px; background: #24475C"></div>
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; color: #A3A6AD; white-space: nowrap">No pitch</div>
+</sc-if>
+</div>
+</header>
+</div>
+</sc-for>
+
+<div style="padding: 0 32px; display: flex; gap: 48px; font-size: 14px; line-height: 20px; color: #C9CBD0">
+<div>Height 72px. Replaces both the old tab bar and the old header.</div>
+<div>The pill has a fixed 260px width, so the header doesn't shift as the note changes.</div>
+<div>The pill is status only. Start and Stop listening live on Home and Live Tuner.</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F2A541","options":["#F2A541","#E8744F","#9D8CF2","#6FD08C"]},"$preview":{"width":1920,"height":580}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var accent = this.props.accent ?? '#F2A541';
+    var names = ['Home', 'Live Tuner', 'File Analysis', 'Settings'];
+    function tabs(active, hover, focus) {
+      return names.map(function (n) {
+        var on = n === active;
+        var hv = n === hover;
+        return {
+          label: n,
+          selected: on ? 'true' : 'false',
+          bg: hv ? '#1F2125' : 'transparent',
+          fg: on ? '#F4F2EE' : (hv ? '#E8E6E1' : '#C9CBD0'),
+          weight: on ? 600 : 500,
+          outline: n === focus ? '2px solid #5FB3E8' : 'none',
+          bar: on ? 1 : 0
+        };
+      });
+    }
+    var rows = [
+      {
+        caption: 'Listening, note detected · Home active',
+        tabs: tabs('Home', null, null),
+        device: '[Input device]',
+        pillBg: '#13232E', dot: '#5FB3E8', label: 'Listening', labelFg: '#8CCBF0',
+        hasNote: true, noPitch: false, note: 'E4', sub: 'in tune'
+      },
+      {
+        caption: 'Listening, no pitch · Live Tuner active · File Analysis hover · long device name truncated',
+        tabs: tabs('Live Tuner', 'File Analysis', null),
+        device: '[Long input device name, cut off at 260px with the full name in a tooltip]',
+        pillBg: '#13232E', dot: '#5FB3E8', label: 'Listening', labelFg: '#8CCBF0',
+        hasNote: false, noPitch: true, note: '', sub: ''
+      },
+      {
+        caption: 'Not listening · Settings active · Home keyboard focus',
+        tabs: tabs('Settings', null, 'Home'),
+        device: '[Input device]',
+        pillBg: '#1F2125', dot: '#A3A6AD', label: 'Not listening', labelFg: '#A3A6AD',
+        hasNote: false, noPitch: false, note: '', sub: ''
+      }
+    ];
+    return { accent: accent, rows: rows };
+  }
+}
+</script>
+</body>
+</html>

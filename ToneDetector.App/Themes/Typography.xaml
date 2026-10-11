@@ -1,0 +1,126 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:System="clr-namespace:System;assembly=System.Runtime">
+
+    <!-- Music Station type tokens. Source of truth: Design/tokens.json.
+         Not mapped: letterSpacing (WPF text has no tracking) and text-transform (supply
+         overline text in uppercase). lineHeight only applies to TextBlock. -->
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/MusicStation;component/Themes/Colors.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <!-- ================= Families ================= -->
+    <!-- IBM Plex isn't bundled: it's used when installed in Windows, otherwise Segoe UI / Consolas. -->
+    <FontFamily x:Key="Sans">IBM Plex Sans, Segoe UI</FontFamily>
+    <FontFamily x:Key="Mono">IBM Plex Mono, Consolas</FontFamily>
+
+    <!-- ================= Sizes ================= -->
+    <System:Double x:Key="DisplayFontSize">30</System:Double>
+    <System:Double x:Key="TitleFontSize">22</System:Double>
+    <System:Double x:Key="BodyFontSize">16</System:Double>
+    <System:Double x:Key="LabelFontSize">14</System:Double>
+    <System:Double x:Key="CaptionFontSize">12</System:Double>
+    <System:Double x:Key="ReadoutHeroFontSize">176</System:Double>
+    <System:Double x:Key="ReadoutFontSize">32</System:Double>
+    <System:Double x:Key="ReadoutSmFontSize">22</System:Double>
+    <System:Double x:Key="ValueFontSize">16</System:Double>
+    <System:Double x:Key="OverlineFontSize">13</System:Double>
+    <System:Double x:Key="MetaFontSize">12</System:Double>
+
+    <!-- ================= Interface (Sans) ================= -->
+    <!-- letterSpacing -0.01em not applied -->
+    <Style x:Key="Display" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Sans}"/>
+        <Setter Property="FontSize" Value="{StaticResource DisplayFontSize}"/>
+        <Setter Property="LineHeight" Value="36"/>
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+
+    <!-- letterSpacing -0.01em not applied -->
+    <Style x:Key="Title" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Sans}"/>
+        <Setter Property="FontSize" Value="{StaticResource TitleFontSize}"/>
+        <Setter Property="LineHeight" Value="28"/>
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+
+    <Style x:Key="Body" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Sans}"/>
+        <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
+        <Setter Property="LineHeight" Value="24"/>
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+    </Style>
+
+    <Style x:Key="Label" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Sans}"/>
+        <Setter Property="FontSize" Value="{StaticResource LabelFontSize}"/>
+        <Setter Property="LineHeight" Value="20"/>
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+    </Style>
+
+    <Style x:Key="Caption" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Sans}"/>
+        <Setter Property="FontSize" Value="{StaticResource CaptionFontSize}"/>
+        <Setter Property="LineHeight" Value="16"/>
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+    </Style>
+
+    <!-- ================= Readouts (Mono) ================= -->
+    <!-- letterSpacing -0.04em not applied -->
+    <Style x:Key="ReadoutHero" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Mono}"/>
+        <Setter Property="FontSize" Value="{StaticResource ReadoutHeroFontSize}"/>
+        <Setter Property="LineHeight" Value="176"/>
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+    </Style>
+
+    <Style x:Key="Readout" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Mono}"/>
+        <Setter Property="FontSize" Value="{StaticResource ReadoutFontSize}"/>
+        <Setter Property="LineHeight" Value="40"/>
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+    </Style>
+
+    <Style x:Key="ReadoutSm" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Mono}"/>
+        <Setter Property="FontSize" Value="{StaticResource ReadoutSmFontSize}"/>
+        <Setter Property="LineHeight" Value="28"/>
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+    </Style>
+
+    <Style x:Key="Value" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Mono}"/>
+        <Setter Property="FontSize" Value="{StaticResource ValueFontSize}"/>
+        <Setter Property="LineHeight" Value="22"/>
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+    </Style>
+
+    <!-- Uppercase, ink-subtle. letterSpacing 0.08em not applied; write the text in capitals. -->
+    <Style x:Key="Overline" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Mono}"/>
+        <Setter Property="FontSize" Value="{StaticResource OverlineFontSize}"/>
+        <Setter Property="LineHeight" Value="18"/>
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="Foreground" Value="{StaticResource InkSubtle}"/>
+    </Style>
+
+    <Style x:Key="Meta" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Mono}"/>
+        <Setter Property="FontSize" Value="{StaticResource MetaFontSize}"/>
+        <Setter Property="LineHeight" Value="16"/>
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+    </Style>
+
+</ResourceDictionary>

@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\ToneDetector.Core\ToneDetector.Core.csproj" />
+    <ProjectReference Include="..\ToneDetector.Audio\ToneDetector.Audio.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4078.44" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Assets\notation.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\vexflow-min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <!-- Explicit, not just relying on transitive propagation from ToneDetector.Audio's own
+         CopyToOutputDirectory item - VstHostSynth needs this DLL sitting next to the exe at
+         runtime for its [DllImport("VstShim.dll")] calls to resolve. -->
+    <None Include="..\ToneDetector.Audio\Native\VstShim.dll" Link="VstShim.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <!-- User-facing name: MusicStation.exe, "Music Station" in file properties. Project, folder and
+         namespaces keep the ToneDetector.App name. RootNamespace is pinned because it would
+         otherwise follow AssemblyName. -->
+    <AssemblyName>MusicStation</AssemblyName>
+    <RootNamespace>ToneDetector.App</RootNamespace>
+    <Product>Music Station</Product>
+    <AssemblyTitle>Music Station</AssemblyTitle>
+    <!-- Native VST3 shim (PHASE4-VST3-NATIVE.md) is x64-only. -->
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+</Project>

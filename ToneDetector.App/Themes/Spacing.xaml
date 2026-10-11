@@ -1,0 +1,34 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:System="clr-namespace:System;assembly=System.Runtime">
+
+    <!-- Music Station spacing and radius tokens. Source of truth: Design/tokens.json.
+         px map 1:1 to WPF device-independent units. -->
+
+    <!-- ================= Spacing ================= -->
+    <!-- Doubles for gaps, widths and heights -->
+    <System:Double x:Key="Space1">8</System:Double>
+    <System:Double x:Key="Space2">12</System:Double>
+    <System:Double x:Key="Space3">16</System:Double>
+    <System:Double x:Key="Space4">24</System:Double>
+    <System:Double x:Key="Space5">32</System:Double>
+
+    <!-- Uniform Thickness for Padding and Margin -->
+    <Thickness x:Key="Space1Thickness">8</Thickness>
+    <Thickness x:Key="Space2Thickness">12</Thickness>
+    <Thickness x:Key="Space3Thickness">16</Thickness>
+    <Thickness x:Key="Space4Thickness">24</Thickness>
+    <Thickness x:Key="Space5Thickness">32</Thickness>
+
+    <!-- ================= Radius ================= -->
+    <CornerRadius x:Key="RadiusSm">5</CornerRadius>
+    <CornerRadius x:Key="RadiusMd">8</CornerRadius>
+    <CornerRadius x:Key="RadiusLg">12</CornerRadius>
+
+    <!-- Named in the radius usage notes, not tokens -->
+    <!-- radius-sm note: segmented toggle items -->
+    <CornerRadius x:Key="RadiusSegment">6</CornerRadius>
+    <!-- radius-md note: list rows and tiles -->
+    <CornerRadius x:Key="RadiusTile">10</CornerRadius>
+
+</ResourceDictionary>

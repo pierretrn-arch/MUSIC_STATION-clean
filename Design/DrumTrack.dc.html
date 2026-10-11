@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Music Station - Drum track</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#0F1012;font-family:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;color:#E8E6E1}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="width: 1500px; height: 800px; box-sizing: border-box; padding: 32px; background: #0F1012; display: flex; flex-direction: column; gap: 20px; font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; color: #E8E6E1">
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A6AD">File Analysis · state</div>
+<h1 style="margin: 0; font-size: 30px; line-height: 36px; font-weight: 600; letter-spacing: -0.01em">Drum track selected</h1>
+</div>
+
+<div style="flex-grow: 1; min-height: 0; display: flex; gap: 20px">
+
+<section aria-label="Tracks" style="width: 300px; flex-shrink: 0; box-sizing: border-box; padding: 16px 12px; background: #17181B; border: 1px solid #25272C; border-radius: 12px; display: flex; flex-direction: column; gap: 8px; overflow: hidden">
+<div style="padding: 0 4px 4px; display: flex; align-items: center; justify-content: space-between">
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A6AD">Tracks</div>
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; color: #A3A6AD">6</div>
+</div>
+<sc-for list="{{tracks}}" as="t" hint-placeholder-count="6">
+<div style="box-sizing: border-box; padding: 10px; border-radius: 10px; background: {{t.cardBg}}; border: 1px solid {{t.cardBorder}}; display: flex; flex-direction: column; gap: 7px; opacity: {{t.dim}}">
+<div style="display: flex; align-items: center; gap: 8px">
+<button aria-label="Track colour" style="width: 16px; height: 16px; flex-shrink: 0; padding: 0; border: none; border-radius: 4px; background: {{t.color}}; cursor: pointer"></button>
+<div style="flex-grow: 1; min-width: 0; font-size: 14px; font-weight: {{t.weight}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.name}}</div>
+<button aria-label="Mute" aria-pressed="{{t.muteOn}}" style="width: 28px; height: 24px; border-radius: 5px; border: 1px solid #34373D; background: {{t.mBg}}; color: {{t.mFg}}; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; font-weight: 600; cursor: pointer">M</button>
+<button aria-label="Solo" aria-pressed="false" style="width: 28px; height: 24px; border-radius: 5px; border: 1px solid #34373D; background: #1F2125; color: #A3A6AD; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; font-weight: 600; cursor: pointer">S</button>
+</div>
+<select aria-label="Instrument" style="height: 30px; width: 100%; box-sizing: border-box; padding: 0 8px; background: #0F1012; border: 1px solid #34373D; border-radius: 6px; color: #E8E6E1; font-family: inherit; font-size: 13px"><option>{{t.inst}}</option></select>
+<div style="display: flex; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 11px; color: #A3A6AD">
+<input type="range" min="0" max="100" value="{{t.vol}}" aria-label="Volume" style="width: 130px; margin: 0; accent-color: #C9CBD0">
+<div style="width: 58px">{{t.db}} dB</div>
+<div>Pan {{t.pan}}</div>
+</div>
+</div>
+</sc-for>
+</section>
+
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+<section aria-label="Drum roll" style="background: #17181B; border: 1px solid #25272C; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column">
+<div style="height: 40px; display: flex; border-bottom: 1px solid #2E3137; background: #131417">
+<div style="width: 150px; flex-shrink: 0; box-sizing: border-box; padding: 0 12px; display: flex; align-items: center; gap: 8px; border-right: 1px solid #2E3137"><div style="width: 10px; height: 10px; border-radius: 3px; background: #D6B48C"></div><div style="font-size: 13px; color: #C9CBD0">Drums (ch 10)</div></div>
+<div style="position: relative; flex-grow: 1; overflow: hidden">
+<sc-for list="{{beats}}" as="b" hint-placeholder-count="12">
+<div style="position: absolute; left: {{b.left}}px; bottom: 0; width: 1px; height: 8px; background: #4A4E56"></div>
+</sc-for>
+<sc-for list="{{bars}}" as="k" hint-placeholder-count="4">
+<div style="position: absolute; top: 0; bottom: 0; left: {{k.left}}px; box-sizing: border-box; padding: 5px 0 0 6px; border-left: 1px solid #6B6F77; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; font-weight: 500; color: #E8E6E1">{{k.label}}</div>
+</sc-for>
+</div>
+</div>
+<div style="display: flex">
+<div style="width: 150px; flex-shrink: 0; display: flex; flex-direction: column; background: #0F1012; border-right: 1px solid #2E3137">
+<sc-for list="{{kit}}" as="d" hint-placeholder-count="6">
+<button style="height: 32px; box-sizing: border-box; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; background: #1F2125; color: #E8E6E1; border: none; border-bottom: 1px solid #0F1012; text-align: left; cursor: pointer"><span style="font-size: 13px; font-weight: 500">{{d.name}}</span><span style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 11px; color: #A3A6AD">{{d.note}}</span></button>
+</sc-for>
+</div>
+<div style="position: relative; flex-grow: 1; overflow: hidden">
+<div style="display: flex; flex-direction: column">
+<sc-for list="{{kit}}" as="d" hint-placeholder-count="6">
+<div style="height: 32px; box-sizing: border-box; border-bottom: 1px solid #1F2125; background: {{d.lane}}"></div>
+</sc-for>
+</div>
+<div style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; pointer-events: none; background-image: linear-gradient(to right, #4A4E56 1px, transparent 1px), linear-gradient(to right, #2E3137 1px, transparent 1px), linear-gradient(to right, #1F2125 1px, transparent 1px); background-size: 240px 100%, 60px 100%, 15px 100%"></div>
+<sc-for list="{{hits}}" as="h" hint-placeholder-count="40">
+<div style="position: absolute; left: {{h.left}}px; top: {{h.top}}px; width: 12px; height: 22px; border-radius: 3px; background: #D6B48C"></div>
+</sc-for>
+</div>
+</div>
+</section>
+
+<div style="box-sizing: border-box; padding: 20px 24px; background: #17181B; border: 1px solid #25272C; border-radius: 12px; display: flex; flex-direction: column; gap: 10px; font-size: 14px; line-height: 20px; color: #C9CBD0">
+<div style="font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A6AD">Drum track rules</div>
+<div>The key column widens to 150px and shows each drum's name, with its note on the right. Click a name to hear it.</div>
+<div>Only drum sounds used in the track get a row, ordered from high to low like the file. Drawing on a drum track adds a new row from a drum list.</div>
+<div>Hits are short fixed blocks in the track colour; their length is ignored on playback.</div>
+<div>A drum track's instrument picker lists drum kits only; melodic tracks list synths and VST3 instruments.</div>
+</div>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F2A541","options":["#F2A541","#E8744F","#9D8CF2","#6FD08C"]},"$preview":{"width":1500,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var accent = this.props.accent ?? '#F2A541';
+    var PC = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+    function nm(m) { return PC[m % 12] + (Math.floor(m / 12) - 1); }
+    var T = [
+      { name: 'Channel 1', inst: '[Piano]', color: accent, db: '0.0', pan: 'C', vol: 80 },
+      { name: 'Channel 2', inst: '[Strings]', color: '#E8739A', db: '−4.5', pan: 'L20', vol: 68 },
+      { name: 'Channel 4', inst: '[Guitar]', color: '#A98BF5', db: '−2.0', pan: 'R15', vol: 74 },
+      { name: 'Channel 5', inst: '[Bass]', color: '#5CC98A', db: '−1.5', pan: 'C', vol: 78 },
+      { name: 'Drums (ch 10)', inst: '[Drum kit]', color: '#D6B48C', db: '−3.0', pan: 'C', vol: 72, sel: true },
+      { name: 'Channel 16', inst: '[Pad]', color: '#3FC1B0', db: '−9.0', pan: 'L30', vol: 50, mute: true }
+    ];
+    var tracks = T.map(function (t) {
+      return { name: t.name, inst: t.inst, color: t.color, db: t.db, pan: t.pan, vol: t.vol,
+        cardBg: t.sel ? '#1F2125' : 'transparent', cardBorder: t.sel ? '#4A4E56' : '#25272C', weight: t.sel ? 600 : 500,
+        muteOn: t.mute ? 'true' : 'false', mBg: t.mute ? '#E0B84A' : '#1F2125', mFg: t.mute ? '#1A1307' : '#A3A6AD', dim: t.mute ? 0.6 : 1 };
+    });
+    var K = [[49, 'Crash'], [46, 'Open hi-hat'], [42, 'Closed hi-hat'], [41, 'Floor tom'], [38, 'Snare'], [36, 'Kick']];
+    var kit = K.map(function (k, i) { return { name: k[1], note: nm(k[0]), lane: i % 2 ? '#141518' : '#1A1C20' }; });
+    function row(p) { for (var i = 0; i < K.length; i++) { if (K[i][0] === p) { return i; } } return 0; }
+    var ev = [];
+    for (var b = 0; b < 4; b++) {
+      var o = b * 4;
+      ev.push([36, o], [36, o + 2], [38, o + 1], [38, o + 3]);
+      if (b % 2 === 1) { ev.push([36, o + 2.5]); }
+      for (var e = 0; e < 8; e++) { if (e !== 7) { ev.push([42, o + e * 0.5]); } }
+      ev.push([46, o + 3.5]);
+    }
+    ev.push([49, 0], [49, 8], [41, 15], [41, 15.25]);
+    var hits = ev.map(function (x) { return { left: Math.round(x[1] * 60) + 2, top: row(x[0]) * 32 + 5 }; });
+    var bars = [], beats = [];
+    for (var n = 0; n < 4; n++) { bars.push({ left: n * 240, label: String(n + 1) }); }
+    for (var j = 1; j < 16; j++) { if (j % 4 !== 0) { beats.push({ left: j * 60 }); } }
+    return { accent: accent, tracks: tracks, kit: kit, hits: hits, bars: bars, beats: beats };
+  }
+}
+</script>
+</body>
+</html>

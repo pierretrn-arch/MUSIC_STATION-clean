@@ -1,0 +1,698 @@
+<UserControl x:Class="ToneDetector.App.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource Bg}"
+             Foreground="{StaticResource Ink}"
+             FontFamily="{StaticResource Sans}"
+             FontSize="{StaticResource BodyFontSize}">
+
+    <!-- Settings (Design/Settings.dc.html): section list (280) on the left, one section at a time
+         on the right. Rows: label (260) · control · info button with the explanation. Controls
+         that depend on an off setting stay visible, disabled and indented. Changes apply straight
+         away (the view models save on close, as before). DataContext is the MainViewModel.
+         Mockup label/control text is 15px, snapped to body (16). -->
+
+    <UserControl.Resources>
+        <Style x:Key="SettingRow" TargetType="Border">
+            <Setter Property="MinHeight" Value="64"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderSubtle}"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        </Style>
+
+        <Style x:Key="SettingLabel" TargetType="TextBlock" BasedOn="{StaticResource Body}">
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <!-- Depends on the setting above: indented 20, InkMuted, regular weight -->
+        <Style x:Key="SettingLabelDependent" TargetType="TextBlock" BasedOn="{StaticResource Body}">
+            <Setter Property="Foreground" Value="{StaticResource InkMuted}"/>
+            <Setter Property="Padding" Value="20,0,0,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <Style x:Key="UnitText" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource Mono}"/>
+            <Setter Property="FontSize" Value="{StaticResource LabelFontSize}"/>
+            <Setter Property="Foreground" Value="{StaticResource InkSubtle}"/>
+            <Setter Property="Margin" Value="10,0,0,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Section list entry: 44px, 6px Accent dot and SurfaceRaised when current. Text styling
+             sits on the header presenter so it doesn't inherit into the section content. -->
+        <Style x:Key="SectionTab" TargetType="TabItem">
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusRingMd}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border x:Name="Chip" CornerRadius="{StaticResource RadiusMd}" Background="Transparent" Padding="12,0">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse x:Name="Dot" Width="6" Height="6" Fill="Transparent" VerticalAlignment="Center"/>
+                                <ContentPresenter x:Name="Label" ContentSource="Header" Margin="12,0,0,0" VerticalAlignment="Center"
+                                                  TextElement.FontFamily="{StaticResource Sans}"
+                                                  TextElement.FontSize="{StaticResource BodyFontSize}"
+                                                  TextElement.FontWeight="Medium"
+                                                  TextElement.Foreground="{StaticResource InkMuted}"/>
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Chip" Property="Background" Value="{StaticResource SurfaceRaised}"/>
+                                <Setter TargetName="Label" Property="TextElement.Foreground" Value="{StaticResource Ink}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Chip" Property="Background" Value="{StaticResource SurfaceRaised}"/>
+                                <Setter TargetName="Dot" Property="Fill" Value="{StaticResource Accent}"/>
+                                <Setter TargetName="Label" Property="TextElement.Foreground" Value="{StaticResource InkStrong}"/>
+                                <Setter TargetName="Label" Property="TextElement.FontWeight" Value="SemiBold"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SectionNav" TargetType="TabControl">
+            <Setter Property="ItemContainerStyle" Value="{StaticResource SectionTab}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabControl">
+                        <Grid Margin="32" KeyboardNavigation.TabNavigation="Local">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="280"/>
+                                <ColumnDefinition Width="24"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Background="{StaticResource Surface}" BorderBrush="{StaticResource BorderSubtle}"
+                                    BorderThickness="1" CornerRadius="{StaticResource RadiusLg}" Padding="12,20">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource Overline}" Text="SETTINGS" Margin="12,0,12,10"/>
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"
+                                                AutomationProperties.Name="Settings sections"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="2" Background="{StaticResource Surface}" BorderBrush="{StaticResource BorderSubtle}"
+                                    BorderThickness="1" CornerRadius="{StaticResource RadiusLg}" Padding="40,32">
+                                <ContentPresenter ContentSource="SelectedContent"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <TabControl Style="{StaticResource SectionNav}">
+
+        <TabItem Header="Audio input">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Label}" Foreground="{StaticResource InkSubtle}"
+                           Text="Changes apply straight away." Margin="0,16,0,0"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                    <StackPanel MaxWidth="960" HorizontalAlignment="Left">
+                        <TextBlock Style="{StaticResource Display}" Text="Audio input"/>
+                        <TextBlock Style="{StaticResource Body}" Foreground="{StaticResource InkMuted}" Margin="0,8,0,28"
+                                   TextWrapping="Wrap" Text="The sample rate used for pitch detection."/>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabel}" Text="Use custom sample rate"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <CheckBox Style="{StaticResource CheckInput}" IsChecked="{Binding Settings.UseCustomSampleRate}" AutomationProperties.Name="Use custom sample rate"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About Use custom sample rate"
+                                ToolTip="Resamples audio to a different rate before pitch detection, independent of your mic's native rate. Lower = less CPU per frame but slightly less precision at very high frequencies (irrelevant for vocals/most instruments). Leave off unless you have a specific reason — the native device rate is already fine."/>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabelDependent}" Text="Sample rate"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" IsEnabled="{Binding Settings.UseCustomSampleRate}">
+                            <TextBox Style="{StaticResource TextInput}" Width="120" TextAlignment="Right" AutomationProperties.Name="Sample rate"
+                                     Text="{Binding Settings.CustomSampleRateHz, UpdateSourceTrigger=LostFocus}"/>
+                            <TextBlock Style="{StaticResource UnitText}" Text="Hz"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Header="Filters">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Label}" Foreground="{StaticResource InkSubtle}"
+                           Text="Changes apply straight away." Margin="0,16,0,0"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                    <StackPanel MaxWidth="960" HorizontalAlignment="Left">
+                        <TextBlock Style="{StaticResource Display}" Text="Filters"/>
+                        <TextBlock Style="{StaticResource Body}" Foreground="{StaticResource InkMuted}" Margin="0,8,0,28"
+                                   TextWrapping="Wrap" Text="Remove rumble or hiss before pitch detection."/>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabel}" Text="High-pass filter"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <CheckBox Style="{StaticResource CheckInput}" IsChecked="{Binding Settings.EnableHighPass}" AutomationProperties.Name="High-pass filter"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About High-pass filter"
+                                ToolTip="Removes energy below the cutoff — rumble, mic stand vibration, hum, breath noise. This runs on raw audio BEFORE pitch detection, so if the cutoff sits above your actual fundamental (e.g. a low voice/instrument), that frequency is removed entirely and can't be detected. Raise the cutoff for more rumble rejection; lower it (or disable) if you suspect it's eating into a low voice/instrument's real signal."/>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabelDependent}" Text="Cutoff"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" IsEnabled="{Binding Settings.EnableHighPass}">
+                            <TextBox Style="{StaticResource TextInput}" Width="120" TextAlignment="Right" AutomationProperties.Name="High-pass cutoff"
+                                     Text="{Binding Settings.HighPassCutoffHz, UpdateSourceTrigger=LostFocus}"/>
+                            <TextBlock Style="{StaticResource UnitText}" Text="Hz"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabel}" Text="Low-pass filter"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <CheckBox Style="{StaticResource CheckInput}" IsChecked="{Binding Settings.EnableLowPass}" AutomationProperties.Name="Low-pass filter"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About Low-pass filter"
+                                ToolTip="Removes energy above the cutoff — hiss, high harmonics, sibilance. Same failure mode as the high-pass filter in reverse: set the cutoff too low and you can remove the fundamental of a high note, preventing detection. Rarely needed unless you have a specific high-frequency noise problem; off by default."/>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabelDependent}" Text="Cutoff"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" IsEnabled="{Binding Settings.EnableLowPass}">
+                            <TextBox Style="{StaticResource TextInput}" Width="120" TextAlignment="Right" AutomationProperties.Name="Low-pass cutoff"
+                                     Text="{Binding Settings.LowPassCutoffHz, UpdateSourceTrigger=LostFocus}"/>
+                            <TextBlock Style="{StaticResource UnitText}" Text="Hz"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Header="Pitch tracking">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Label}" Foreground="{StaticResource InkSubtle}"
+                           Text="Changes apply straight away." Margin="0,16,0,0"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                    <StackPanel MaxWidth="960" HorizontalAlignment="Left">
+                        <TextBlock Style="{StaticResource Display}" Text="Pitch tracking"/>
+                        <TextBlock Style="{StaticResource Body}" Foreground="{StaticResource InkMuted}" Margin="0,8,0,28"
+                                   TextWrapping="Wrap" Text="How the detected pitch is smoothed from frame to frame."/>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabel}" Text="Pitch-track smoothing"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <ComboBox Style="{StaticResource Select}" FontFamily="{StaticResource Sans}" Width="300" AutomationProperties.Name="Pitch-track smoothing"
+                                      ItemsSource="{Binding Settings.SmoothingModes}" SelectedItem="{Binding Settings.SmoothingMode}"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About Pitch-track smoothing"
+                                ToolTip="Smooths the frame-by-frame pitch AFTER detection (in cents, not Hz) — this is what stabilizes the needle/hero display and each note's recorded mean pitch. None = raw YIN output, zero lag, jittery, most faithful to real vibrato. Moving Average = simple N-frame average; wider window = smoother but more lag and more vibrato-flattening. Kalman = tracks both pitch AND its rate of change, so it reacts to real jumps faster than a moving average at the same smoothness — presets Fast/Smooth/Studio trade responsiveness for stability, in that order. Use lighter smoothing (None/Fast) if you care about accurate vibrato measurement or fast passages; heavier (Smooth/Studio) for a calm needle on long held notes."/>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabelDependent}" Text="MA window size"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" IsEnabled="{Binding Settings.IsMovingAverageSelected}">
+                            <TextBox Style="{StaticResource TextInput}" Width="120" TextAlignment="Right" AutomationProperties.Name="MA window size"
+                                     Text="{Binding Settings.MovingAverageWindowSize, UpdateSourceTrigger=LostFocus}"/>
+                            <TextBlock Style="{StaticResource UnitText}" Text="frames"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About MA window size"
+                                ToolTip="Number of recent frames averaged together (only used when smoothing mode is Moving Average). Smaller (2-3) = faster response, less smoothing. Larger (8-10) = calmer needle, more lag, and more likely to flatten real vibrato out of the display and the note's recorded pitch."/>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabelDependent}" Text="Kalman preset"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" IsEnabled="{Binding Settings.IsKalmanSelected}">
+                            <ComboBox Style="{StaticResource Select}" FontFamily="{StaticResource Sans}" Width="300" AutomationProperties.Name="Kalman preset"
+                                      ItemsSource="{Binding Settings.KalmanPresets}" SelectedItem="{Binding Settings.KalmanPreset}"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About Kalman preset"
+                                ToolTip="Only used when smoothing mode is Kalman. Fast = tracks glides/vibrato closely, least smoothing, closest to raw. Smooth (default) = balanced. Studio = heaviest smoothing and most stable needle, but most lag and most vibrato-flattening — best for a glued-to-the-note display rather than expressive tracking."/>
+                    </Grid>
+                </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Header="Voicing">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Label}" Foreground="{StaticResource InkSubtle}"
+                           Text="Changes apply straight away." Margin="0,16,0,0"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                    <StackPanel MaxWidth="960" HorizontalAlignment="Left">
+                        <TextBlock Style="{StaticResource Display}" Text="Voicing"/>
+                        <TextBlock Style="{StaticResource Body}" Foreground="{StaticResource InkMuted}" Margin="0,8,0,28"
+                                   TextWrapping="Wrap" Text="When a sound counts as a note, and when a gap counts as silence."/>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabel}" Text="Breathiness tolerance"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBox Style="{StaticResource TextInput}" Width="120" TextAlignment="Right" AutomationProperties.Name="Breathiness tolerance"
+                                     Text="{Binding Settings.VoicingAperiodicityThreshold, UpdateSourceTrigger=LostFocus}"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About Breathiness tolerance"
+                                ToolTip="How impure/noisy a tone can be and still count as a genuine pitch rather than 'no pitch'. Higher = accepts breathier/less-pure tones as voiced — helps quieter or higher-register ('head voice') singing, which tends to be both breathier and softer than a chest-voice mid-range note. Too high risks treating background noise as a note. Default 0.20 (YinPitchDetector's own built-in default is a stricter 0.15)."/>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabel}" Text="Min. signal level"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBox Style="{StaticResource TextInput}" Width="120" TextAlignment="Right" AutomationProperties.Name="Min. signal level"
+                                     Text="{Binding Settings.SilenceRmsThreshold, UpdateSourceTrigger=LostFocus}"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About Min. signal level"
+                                ToolTip="The loudness floor below which a frame is treated as silence without even attempting pitch detection. Lower = detects quieter singing/playing as voiced instead of silence. Too low risks picking up mic hiss/room noise as a note during quiet passages. Default 0.005 (YinPitchDetector's own built-in default is a stricter 0.01)."/>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabel}" Text="Max. voiced gap"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBox Style="{StaticResource TextInput}" Width="120" TextAlignment="Right" AutomationProperties.Name="Max. voiced gap"
+                                     Text="{Binding Settings.MaxVoicedGapMs, UpdateSourceTrigger=LostFocus}"/>
+                            <TextBlock Style="{StaticResource UnitText}" Text="ms"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About Max. voiced gap"
+                                ToolTip="Bridges a brief unvoiced dropout inside a sustained note (vibrato dip, breath, momentary mic dropout) so it doesn't fragment one note into several. Raise this if long notes are getting split into short fragments with no Silence row shown between them. Keep it comfortably below Min. silence gap below, or the two thresholds fight each other. Default 110."/>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabel}" Text="Min. silence gap"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBox Style="{StaticResource TextInput}" Width="120" TextAlignment="Right" AutomationProperties.Name="Min. silence gap"
+                                     Text="{Binding Settings.MinSilenceMs, UpdateSourceTrigger=LostFocus}"/>
+                            <TextBlock Style="{StaticResource UnitText}" Text="ms"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About Min. silence gap"
+                                ToolTip="How long an unvoiced gap must last (once it's outlasted Max. voiced gap above) before it's reported as a Silence row, rather than just quietly ending one note and starting the next. Default 150."/>
+                    </Grid>
+                </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Header="Piano roll">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Label}" Foreground="{StaticResource InkSubtle}"
+                           Text="Changes apply straight away." Margin="0,16,0,0"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                    <StackPanel MaxWidth="960" HorizontalAlignment="Left">
+                        <TextBlock Style="{StaticResource Display}" Text="Piano roll"/>
+                        <TextBlock Style="{StaticResource Body}" Foreground="{StaticResource InkMuted}" Margin="0,8,0,28"
+                                   TextWrapping="Wrap" Text="What the piano roll shows."/>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabel}" Text="Color by pitch class"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <CheckBox Style="{StaticResource CheckInput}" IsChecked="{Binding Visualization.PianoRollColorByPitchClass}" AutomationProperties.Name="Color by pitch class"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About Color by pitch class"
+                                ToolTip="When on, each of the 12 pitch classes (C, C#, D, …) gets its own color, making repeated notes/patterns easy to spot at a glance. When off, all notes render in a single accent color."/>
+                    </Grid>
+                </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Header="Notation">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Label}" Foreground="{StaticResource InkSubtle}"
+                           Text="Changes apply straight away." Margin="0,16,0,0"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                    <StackPanel MaxWidth="960" HorizontalAlignment="Left">
+                        <TextBlock Style="{StaticResource Display}" Text="Notation"/>
+                        <TextBlock Style="{StaticResource Body}" Foreground="{StaticResource InkMuted}" Margin="0,8,0,28"
+                                   TextWrapping="Wrap" Text="Sheet music of the transcript, on the Live Tuner tab."/>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabel}" Text="Enable live notation view"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <CheckBox Style="{StaticResource CheckInput}" IsChecked="{Binding Visualization.NotationEnabled}" AutomationProperties.Name="Enable live notation view"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About Enable live notation view"
+                                ToolTip="Renders the transcript as sheet music (via VexFlow) in the Live Tuner tab's Notation view. Off by default: re-rendering the whole stave on every update has a real CPU cost, so only enable it when you actually want to look at it."/>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabelDependent}" Text="Update throttle"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" IsEnabled="{Binding Visualization.NotationEnabled}">
+                            <TextBox Style="{StaticResource TextInput}" Width="120" TextAlignment="Right" AutomationProperties.Name="Update throttle"
+                                     Text="{Binding Visualization.NotationUpdateThrottleMs, UpdateSourceTrigger=LostFocus}"/>
+                            <TextBlock Style="{StaticResource UnitText}" Text="ms"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About Update throttle"
+                                ToolTip="Minimum time between notation re-renders. Lower = more up-to-date view, more CPU. Higher = choppier updates, less CPU. The default (500ms) is a reasonable balance; raise it further if you notice stutter elsewhere in the app while notation is enabled."/>
+                    </Grid>
+                </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Header="MIDI &amp; keyboard">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Label}" Foreground="{StaticResource InkSubtle}"
+                           Text="Changes apply straight away." Margin="0,16,0,0"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                    <StackPanel MaxWidth="960" HorizontalAlignment="Left">
+                        <TextBlock Style="{StaticResource Display}" Text="MIDI &amp; keyboard"/>
+                        <TextBlock Style="{StaticResource Body}" Foreground="{StaticResource InkMuted}" Margin="0,8,0,28"
+                                   TextWrapping="Wrap" Text="Play notes from a MIDI keyboard or the computer keyboard."/>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabel}" Text="MIDI input device"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <ComboBox Style="{StaticResource Select}" FontFamily="{StaticResource Sans}" Width="300" AutomationProperties.Name="MIDI input device"
+                                      ItemsSource="{Binding NoteInput.MidiDevices}" DisplayMemberPath="Name" SelectedItem="{Binding NoteInput.SelectedMidiDevice}"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About MIDI input device"
+                                ToolTip="A connected USB/DIN MIDI keyboard to route straight into the synth (Live Tuner and File Analysis playback share the same engine). Select '(None)' to disconnect. Devices plugged in after the app started won't appear here until the app is restarted."/>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabel}" Text="Keyboard base octave"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBox Style="{StaticResource TextInput}" Width="120" TextAlignment="Right" AutomationProperties.Name="Keyboard base octave"
+                                     Text="{Binding NoteInput.KeyboardBaseOctave, UpdateSourceTrigger=LostFocus}"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About Keyboard base octave"
+                                ToolTip="MIDI note number that the computer keyboard's Z key plays (default 48 = C3). Also adjustable live with Page Up/Page Down while computer keyboard input is enabled."/>
+                    </Grid>
+                </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Header="Synth">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Label}" Foreground="{StaticResource InkSubtle}"
+                           Text="Changes apply straight away." Margin="0,16,0,0"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                    <StackPanel MaxWidth="960" HorizontalAlignment="Left">
+                        <TextBlock Style="{StaticResource Display}" Text="Synth"/>
+                        <TextBlock Style="{StaticResource Body}" Foreground="{StaticResource InkMuted}" Margin="0,8,0,28"
+                                   TextWrapping="Wrap" Text="How notes are played back: the engine, the plugin and the output level."/>
+                <TextBlock Style="{StaticResource Overline}" Text="ENGINE" Margin="0,0,0,8"/>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabel}" Text="Synth engine"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <ComboBox Style="{StaticResource Select}" FontFamily="{StaticResource Sans}" Width="300" AutomationProperties.Name="Synth engine"
+                                      ItemsSource="{Binding NoteInput.SynthEngineOptions}" SelectedItem="{Binding NoteInput.SynthEngine}"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About Synth engine"
+                                ToolTip="Built-in (Sine) is the app's own simple polyphonic synth. VST3 Plugin routes all playback — MIDI, computer keyboard, on-screen keyboard, and transcript playback — through a loaded VST3 instrument plugin instead. Switching plugins briefly interrupts audio while the new one loads."/>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabelDependent}" Text="VST3 plugin"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" IsEnabled="{Binding NoteInput.IsVst3EngineSelected}">
+                            <ComboBox Style="{StaticResource Select}" FontFamily="{StaticResource Sans}" Width="300" AutomationProperties.Name="VST3 plugin"
+                                      ItemsSource="{Binding NoteInput.AvailablePlugins}" DisplayMemberPath="Name" SelectedItem="{Binding NoteInput.SelectedPlugin}"/>
+                            <Button Style="{StaticResource ButtonSecondary}" Height="44" Padding="16,0" Margin="10,0,0,0" Command="{Binding NoteInput.RescanPluginsCommand}">
+                                <StackPanel Orientation="Horizontal">
+                                    <ContentControl Style="{StaticResource Icon}" Content="{StaticResource IconRefresh}" Width="16" Height="16"/>
+                                    <TextBlock Text="Rescan" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Style="{StaticResource ButtonDanger}" Content="Remove selected plugin" Margin="10,0,0,0"
+                                    Command="{Binding NoteInput.RemoveSelectedPluginCommand}" ToolTip="Takes the plugin currently selected above out of this list — e.g. one that fails to load — and keeps it out on future rescans too."/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About VST3 plugin"
+                                ToolTip="Plugins found under the standard C:\Program Files\Common Files\VST3 folder, plus the additional scan folder below if set. Click Rescan after installing a new plugin or changing the additional folder — the list isn't watched live."/>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabelDependent}" Text="Additional scan folder"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" IsEnabled="{Binding NoteInput.IsVst3EngineSelected}">
+                            <TextBox Style="{StaticResource TextInput}" Width="520" AutomationProperties.Name="Additional scan folder"
+                                     Text="{Binding NoteInput.AdditionalScanPath, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About Additional scan folder"
+                                ToolTip="Optional extra folder to search for .vst3 plugins, for installs outside the standard VST3 location. Click Rescan after changing this."/>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabelDependent}" Text="Plugin editor"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" IsEnabled="{Binding NoteInput.IsVst3EngineSelected}">
+                            <Button Style="{StaticResource ButtonSecondary}" Height="44" Padding="16,0" Click="ShowPluginEditorButton_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <ContentControl Style="{StaticResource Icon}" Content="{StaticResource IconWindow}" Width="16" Height="16"/>
+                                    <TextBlock Text="Show plugin editor…" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About Plugin editor"
+                                ToolTip="Opens the currently-loaded VST3 plugin's own editor window (patch browser, knobs, etc.) in a separate floating window. Only available once a VST3 plugin is actually loaded and selected above."/>
+                    </Grid>
+                </Border>
+                <TextBlock Style="{StaticResource Overline}" Text="OUTPUT" Margin="0,32,0,8"/>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabel}" Text="Synth voice count"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBox Style="{StaticResource TextInput}" Width="96" TextAlignment="Right" AutomationProperties.Name="Synth voice count"
+                                     Text="{Binding NoteInput.VoiceCount, UpdateSourceTrigger=LostFocus}"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About Synth voice count"
+                                ToolTip="Maximum notes the built-in synth can sound at once before the oldest note is cut off to make room for a new one. Higher supports denser chords/overlap; lower uses less CPU. Changing this rebuilds the synth and briefly silences it."/>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabel}" Text="Master volume"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Slider Style="{StaticResource SliderFader}" Width="300" Minimum="0" Maximum="1" Foreground="{StaticResource InkMuted}"
+                                    AutomationProperties.Name="Master volume" Value="{Binding NoteInput.MasterVolume}"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About Master volume"
+                                ToolTip="Output level for the synth — affects USB MIDI, computer keyboard, on-screen keyboard, and transcript playback alike."/>
+                    </Grid>
+                </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Header="Diagnostics">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Label}" Foreground="{StaticResource InkSubtle}"
+                           Text="Changes apply straight away." Margin="0,16,0,0"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                    <StackPanel MaxWidth="960" HorizontalAlignment="Left">
+                        <TextBlock Style="{StaticResource Display}" Text="Diagnostics"/>
+                        <TextBlock Style="{StaticResource Body}" Foreground="{StaticResource InkMuted}" Margin="0,8,0,28"
+                                   TextWrapping="Wrap" Text="Tools for looking into detection problems."/>
+                <Border Style="{StaticResource SettingRow}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource SettingLabel}" Text="Diagnostic logging"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <CheckBox Style="{StaticResource CheckInput}" IsChecked="{Binding Settings.DiagnosticLoggingEnabled}" AutomationProperties.Name="Diagnostic logging"/>
+                        </StackPanel>
+                        <Button Grid.Column="4" Style="{StaticResource InfoButton}" AutomationProperties.Name="About Diagnostic logging"
+                                ToolTip="Writes one line per analysis frame to %AppData%\MusicStation\voicing-diagnostics.log while the Live Tuner pipeline is running: measured RMS and aperiodicity, the current Breathiness tolerance/Min. signal level thresholds, and whether the frame was accepted as voiced (and why not, if not). For diagnosing why specific input (e.g. guitar picks) isn't being detected, instead of guessing at threshold values. Off by default — a debugging aid, not something to leave on during normal use. Starts a fresh log each time it's switched on."/>
+                    </Grid>
+                </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </TabItem>
+    </TabControl>
+</UserControl>

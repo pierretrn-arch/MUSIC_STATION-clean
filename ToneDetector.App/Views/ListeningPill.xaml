@@ -1,0 +1,97 @@
+<UserControl x:Class="ToneDetector.App.Views.ListeningPill"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:ToneDetector.App.ViewModels"
+             Focusable="False"
+             AutomationProperties.Name="Listening status">
+
+    <!-- Header listening pill (Header.dc.html). Status only, fixed at 260 so the header never
+         shifts. Three states, driven by LiveTuner.IsPipelineRunning and HasPitch:
+           Listening + note + "in tune" / signed offset   (PitchWell, Pitch dot, PitchText label)
+           Listening + "No pitch"
+           Not listening                                   (SurfaceRaised, InkSubtle dot and label)
+         Mockup note size 18px, snapped to value (16). DataContext is the MainViewModel. -->
+
+    <UserControl.Resources>
+        <Style x:Key="PillBody" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource SurfaceRaised}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LiveTuner.IsPipelineRunning}" Value="True">
+                    <Setter Property="Background" Value="{StaticResource PitchWell}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="PillDot" TargetType="Ellipse">
+            <Setter Property="Fill" Value="{StaticResource InkSubtle}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LiveTuner.IsPipelineRunning}" Value="True">
+                    <Setter Property="Fill" Value="{StaticResource Pitch}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="PillLabel" TargetType="TextBlock" BasedOn="{StaticResource Label}">
+            <Setter Property="Text" Value="Not listening"/>
+            <Setter Property="Foreground" Value="{StaticResource InkSubtle}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LiveTuner.IsPipelineRunning}" Value="True">
+                    <Setter Property="Text" Value="Listening"/>
+                    <Setter Property="Foreground" Value="{StaticResource PitchText}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Detail after the note: PitchText in tune, Ink for an out-of-tune offset -->
+        <Style x:Key="PillDetail" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource Ink}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LiveTuner.TuningState}" Value="{x:Static vm:TuningState.InTune}">
+                    <Setter Property="Foreground" Value="{StaticResource PitchText}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- "No pitch" part: only while listening without a pitch -->
+        <Style x:Key="NoPitchPart" TargetType="StackPanel">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding LiveTuner.IsPipelineRunning}" Value="True"/>
+                        <Condition Binding="{Binding LiveTuner.HasPitch}" Value="False"/>
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Visibility" Value="Visible"/>
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Border Style="{StaticResource PillBody}" Width="260" Height="40" CornerRadius="20" Padding="16,0"
+            SnapsToDevicePixels="True">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <Ellipse Style="{StaticResource PillDot}" Width="8" Height="8" VerticalAlignment="Center"/>
+            <TextBlock Style="{StaticResource PillLabel}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+
+            <!-- Listening with a pitch -->
+            <StackPanel Orientation="Horizontal"
+                        Visibility="{Binding LiveTuner.HasPitch, Converter={StaticResource BoolToVisibilityConverter}}">
+                <Rectangle Width="1" Height="18" Fill="{StaticResource PitchEdge}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding LiveTuner.PitchNoteText, Mode=OneWay}" Margin="10,0,0,0" VerticalAlignment="Center"
+                           FontFamily="{StaticResource Mono}" FontSize="{StaticResource ValueFontSize}" FontWeight="Medium"
+                           Foreground="{StaticResource InkStrong}"/>
+                <TextBlock Style="{StaticResource PillDetail}" Text="{Binding LiveTuner.PitchStatusDetail, Mode=OneWay}"
+                           Margin="10,0,0,0" VerticalAlignment="Center"
+                           FontFamily="{StaticResource Mono}" FontSize="{StaticResource OverlineFontSize}"/>
+            </StackPanel>
+
+            <!-- Listening, no pitch -->
+            <StackPanel Style="{StaticResource NoPitchPart}" Orientation="Horizontal">
+                <Rectangle Width="1" Height="18" Fill="{StaticResource PitchEdge}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                <TextBlock Text="No pitch" Margin="10,0,0,0" VerticalAlignment="Center"
+                           FontFamily="{StaticResource Mono}" FontSize="{StaticResource OverlineFontSize}"
+                           Foreground="{StaticResource InkSubtle}"/>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>
