@@ -697,7 +697,17 @@ public sealed class LiveTunerViewModel : INotifyPropertyChanged, IDisposable
             AppendCommittedEvent(evt);
     }
 
-    internal void SimulateFrameForTest(PitchAnalysisResult result) => ProcessFrame(result);
+    /// <summary>Test-only: feeds one frame as the pipeline would. Without a running pipeline (a PC
+    /// or build machine with no microphone) frames would be 0 ms long and nothing would ever
+    /// commit, so they're timed as a 48 kHz capture would time them.</summary>
+    internal void SimulateFrameForTest(PitchAnalysisResult result)
+    {
+        if (_frameDurationMs <= 0)
+            _frameDurationMs = HopSize * 1000.0 / TestSampleRateHz;
+        ProcessFrame(result);
+    }
+
+    private const int TestSampleRateHz = 48000;
 
     /// <summary>Test-only: the frame length a running pipeline would set (tests have no capture device).</summary>
     internal double FrameDurationMsForTest
