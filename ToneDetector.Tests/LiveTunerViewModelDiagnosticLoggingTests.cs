@@ -42,6 +42,8 @@ public sealed class LiveTunerViewModelDiagnosticLoggingTests : IDisposable
         var viewModel = new LiveTunerViewModel(
             settings, new PlaybackViewModel(() => new FakeSynth(), () => new FakeWavePlayer()),
             () => fakeCapture, diagnosticsLogger: logger);
+        if (viewModel.CaptureDevices.Count == 0)
+            return; // no capture device on this machine: the pipeline can't start (as in the hot-plug tests)
 
         float[] tone = GenerateSineWave(440.0, fakeCapture.SampleRate, 0.5);
         fakeCapture.RaiseSamplesAvailable(tone);

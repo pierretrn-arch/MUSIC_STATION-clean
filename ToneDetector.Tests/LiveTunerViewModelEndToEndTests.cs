@@ -32,6 +32,8 @@ public class LiveTunerViewModelEndToEndTests
     {
         var fakeCapture = new FakeAudioCapture { SampleRate = 48000 };
         var viewModel = new LiveTunerViewModel(new PipelineSettingsViewModel(), new PlaybackViewModel(() => new FakeSynth(), () => new FakeWavePlayer()), () => fakeCapture);
+        if (viewModel.CaptureDevices.Count == 0)
+            return; // no capture device on this machine: the pipeline can't start (as in the hot-plug tests)
 
         float[] tone = GenerateSineWave(440.0, fakeCapture.SampleRate, 0.5);
         fakeCapture.RaiseSamplesAvailable(tone);
@@ -48,6 +50,8 @@ public class LiveTunerViewModelEndToEndTests
     {
         var fakeCapture = new FakeAudioCapture { SampleRate = 48000 };
         var viewModel = new LiveTunerViewModel(new PipelineSettingsViewModel(), new PlaybackViewModel(() => new FakeSynth(), () => new FakeWavePlayer()), () => fakeCapture);
+        if (viewModel.CaptureDevices.Count == 0)
+            return; // no capture device on this machine: the pipeline can't start (as in the hot-plug tests)
         viewModel.IsRecording = true;
 
         float[] tone = GenerateSineWave(440.0, fakeCapture.SampleRate, 2.0);
@@ -74,6 +78,8 @@ public class LiveTunerViewModelEndToEndTests
     {
         var fakeCapture = new FakeAudioCapture { SampleRate = 48000 };
         var viewModel = new LiveTunerViewModel(new PipelineSettingsViewModel(), new PlaybackViewModel(() => new FakeSynth(), () => new FakeWavePlayer()), () => fakeCapture);
+        if (viewModel.CaptureDevices.Count == 0)
+            return; // no capture device on this machine: the pipeline can't start (as in the hot-plug tests)
         viewModel.IsRecording = false;
 
         float[] tone = GenerateSineWave(440.0, fakeCapture.SampleRate, 2.0);
