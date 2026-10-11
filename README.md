@@ -49,10 +49,20 @@ Music Station is a Windows desktop app for singers and musicians. It listens to 
 ## System requirements
 
 - Windows 10 or Windows 11 (64-bit)
-- .NET 8 Desktop Runtime
+- .NET 8 Desktop Runtime (included in the installer)
 - Microsoft Edge WebView2 Runtime (for the Notation view)
 - A microphone for the Live Tuner
 - Optional: a USB MIDI keyboard, VST3 instrument plugins
+
+## Install
+
+1. Open the [Releases page](https://github.com/pierretrn-arch/MUSIC_STATION-clean/releases) and download the latest `MusicStation-Setup-x.y.z.exe`.
+2. Run it and follow the steps. .NET is included, so nothing else needs installing.
+3. Start Music Station from the Start menu.
+
+Windows may show a "Windows protected your PC" warning because the installer isn't code-signed yet. Click **More info**, then **Run anyway**.
+
+To uninstall, use **Settings > Apps > Installed apps > Music Station > Uninstall**. Your settings are kept in `%APPDATA%`.
 
 ## Build from source
 
@@ -64,6 +74,8 @@ cd <repository folder>
 dotnet build ToneDetector.sln
 dotnet run --project ToneDetector.App
 ```
+
+To build the installer, push a version tag (for example `v0.1.0`). The **Build installer** GitHub Actions workflow builds the setup file and attaches it to a new release. The setup script is `installer/MusicStation.iss` (Inno Setup 6).
 
 Run the tests with:
 

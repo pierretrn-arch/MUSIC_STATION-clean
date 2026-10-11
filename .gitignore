@@ -2,9 +2,12 @@
 [Bb]in/
 [Oo]bj/
 publish/
+# Installer output (installer/MusicStation.iss)
+dist/
 
 # VstNativeShim native (CMake) build output
 VstNativeShim/build/
+VstNativeShim/build-release/
 
 # Third-party VST plugin binaries + vendored SDK (not our source; large, downloadable separately)
 VST/

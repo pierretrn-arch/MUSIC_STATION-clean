@@ -1,0 +1,83 @@
+# Builds the Music Station setup .exe on a Windows build machine.
+#  - Push a version tag (e.g. v0.1.0): builds, tests, and publishes a GitHub Release with
+#    MusicStation-Setup-0.1.0.exe attached.
+#  - "Run workflow" on the Actions tab: same build, the setup file is kept as a download on the
+#    run's page (no release).
+name: Build installer
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  installer:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version
+        id: version
+        shell: pwsh
+        run: |
+          if ("${{ github.ref_type }}" -eq "tag") { $v = "${{ github.ref_name }}".TrimStart("v") } else { $v = "0.0.0-test.${{ github.run_number }}" }
+          "value=$v" >> $env:GITHUB_OUTPUT
+          Write-Host "Version $v"
+
+      # The VST3 host library is rebuilt in Release with the C++ runtime linked in, so it needs
+      # nothing extra on users' PCs (the checked-in copy is a local debug build).
+      - name: Get the VST3 SDK
+        shell: pwsh
+        run: |
+          git clone --depth 1 --recurse-submodules --shallow-submodules https://github.com/steinbergmedia/vst3sdk.git VstNativeShim/vst3sdk
+          git -C VstNativeShim/vst3sdk log -1 --format="VST3 SDK commit %H (%cs)"
+
+      - name: Build VstShim.dll (Release)
+        shell: pwsh
+        run: |
+          cmake -S VstNativeShim -B VstNativeShim/build-release -A x64 -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded
+          if ($LASTEXITCODE -ne 0) { throw "CMake configure failed" }
+          cmake --build VstNativeShim/build-release --config Release --target VstShim
+          if ($LASTEXITCODE -ne 0) { throw "VstShim build failed" }
+          $dll = Get-ChildItem VstNativeShim/build-release -Recurse -Filter VstShim.dll | Where-Object { $_.FullName -match "Release" } | Select-Object -First 1
+          if (-not $dll) { throw "VstShim.dll not found" }
+          $text = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes($dll.FullName))
+          foreach ($runtime in "MSVCP140", "VCRUNTIME140", "ucrtbased") {
+            if ($text -match $runtime) { throw "VstShim.dll still depends on $runtime" }
+          }
+          Copy-Item $dll.FullName ToneDetector.Audio/Native/VstShim.dll -Force
+          Write-Host "Using $($dll.FullName)"
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Test
+        run: dotnet test ToneDetector.sln -c Release
+
+      - name: Publish (self-contained, includes .NET)
+        run: dotnet publish ToneDetector.App/ToneDetector.App.csproj -c Release -r win-x64 --self-contained true -p:Version=${{ steps.version.outputs.value }} -o publish
+
+      - name: Build setup
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress; if ($LASTEXITCODE -ne 0) { throw "Inno Setup install failed" } }
+          & $iscc "/DAppVersion=${{ steps.version.outputs.value }}" installer\MusicStation.iss
+          if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed" }
+          Get-ChildItem dist | Format-Table Name, Length
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MusicStation-Setup-${{ steps.version.outputs.value }}
+          path: dist/*.exe
+
+      - name: Publish release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.exe
+          generate_release_notes: true
